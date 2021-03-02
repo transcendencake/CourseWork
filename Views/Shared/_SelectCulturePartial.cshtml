@@ -1,0 +1,18 @@
+﻿@using Microsoft.Extensions.Options
+@using Microsoft.AspNetCore.Builder
+
+@inject IOptions<RequestLocalizationOptions> Options
+
+@{ 
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var availibleCultures = Options.Value.SupportedUICultures
+        .Select(item => new SelectListItem { Value = item.Name, Text = item.NativeName }).ToList();
+}
+<li class="nav-item">
+    <form asp-controller="Cookies" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path"
+          method="post" class="form-inline nav-item">
+        Language:  <select class="custom-select" name="language" onchange="this.form.submit();"
+                          asp-for="@requestCulture.RequestCulture.UICulture.Name"
+                          asp-items="availibleCultures"></select>
+    </form>
+</li>

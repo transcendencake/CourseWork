@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - CourseWork</title>
+    <title>@ViewData["Title"] - @Localizer["Title"]</title>
     <link rel="stylesheet" href="~/css/site.css" />
     @{
         string theme;
@@ -21,51 +21,38 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Fun fiction</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["Title"]</a>
                 <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse" id="navbar">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["HomePage"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
                         </li>
                         <partial name="_LoginPartial" />
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Theme</a>
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Theme"]</a>
                             <div class="dropdown-menu">
                                 <form class="form-inline" asp-area="" asp-controller="Cookies" asp-action="SetTheme" asp-route-returnUrl="@string.Format("{0}://{1}{2}{3}", Context.Request.Scheme, Context.Request.Host, Context.Request.Path, Context.Request.QueryString)"
                                       asp-route-theme="Dark">
-                                    <button type="submit" class="dropdown-item">Dark</button>
+                                    <button type="submit" class="dropdown-item">@Localizer["Dark"]</button>
                                 </form>
                                 <div class="dropdown-divider"></div>
                                 <form class="form-inline" asp-area="" asp-controller="Cookies" asp-action="SetTheme" asp-route-returnUrl="@string.Format("{0}://{1}{2}{3}", Context.Request.Scheme, Context.Request.Host, Context.Request.Path, Context.Request.QueryString)"
                                       asp-route-theme="Light">
-                                    <button type="submit" class="dropdown-item">Light</button>
+                                    <button type="submit" class="dropdown-item">@Localizer["Light"]</button>
                                 </form>
                             </div>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Language</a>
-                            <div class="dropdown-menu">
-                                <form class="form-inline" asp-area="" asp-controller="Cookies" asp-action="SetLanguage" asp-route-returnUrl="@string.Format("{0}://{1}{2}{3}", Context.Request.Scheme, Context.Request.Host, Context.Request.Path, Context.Request.QueryString)"
-                                      asp-route-language="Eng">
-                                    <button type="submit" class="dropdown-item">Eng</button>
-                                </form>
-                                <div class="dropdown-divider"></div>
-                                <form class="form-inline" asp-area="" asp-controller="Cookies" asp-action="SetLanguage" asp-route-returnUrl="@string.Format("{0}://{1}{2}{3}", Context.Request.Scheme, Context.Request.Host, Context.Request.Path, Context.Request.QueryString)"
-                                      asp-route-language="Rus">
-                                    <button type="submit" class="dropdown-item">Rus</button>
-                                </form>
-                            </div>
-                        </li>
+                        <partial name="_SelectCulturePartial" />
                     </ul>
                     <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                        <input class="form-control mr-sm-2" type="text" placeholder="@Localizer["Search"]">
+                        <button class="btn btn-secondary my-2 my-sm-0" type="submit">@Localizer["Search"]</button>
                     </form>
                     
                 </div>
@@ -80,7 +67,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2021 - CourseWork - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2021 - @Localizer["CourseWork"] - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Localization;
 
 namespace CourseWork.Controllers
 {
@@ -20,8 +21,8 @@ namespace CourseWork.Controllers
         [HttpPost]
         public IActionResult SetLanguage(string returnUrl, string language)
         {
-            HttpContext.Response.Cookies.Delete("language");
-            HttpContext.Response.Cookies.Append("language", language);
+            HttpContext.Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language)));
 
             return Redirect(returnUrl);
         }
