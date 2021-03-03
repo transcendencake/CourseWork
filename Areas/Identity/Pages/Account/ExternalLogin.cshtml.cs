@@ -21,19 +21,16 @@ namespace CourseWork.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
-            ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            ILogger<ExternalLoginModel> logger)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
-            _emailSender = emailSender;
         }
 
         [BindProperty]
@@ -138,10 +135,7 @@ namespace CourseWork.Areas.Identity.Pages.Account
                             "/Account/ConfirmEmail",
                             pageHandler: null,
                             values: new { area = "Identity", userId = userId, code = code },
-                            protocol: Request.Scheme);
-
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                            protocol: Request.Scheme);                      
 
                         // If account confirmation is required, we need to show the link if we don't have a real email sender
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)

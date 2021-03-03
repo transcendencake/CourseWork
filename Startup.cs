@@ -45,17 +45,32 @@ namespace CourseWork
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddAuthentication().AddGoogle(googleOptions =>
-             {
-                 googleOptions.ClientId = "1023560741731-s9ms2kbbnk79amoaqgcsbmdfr12s01f4.apps.googleusercontent.com";
-                 googleOptions.ClientSecret = "I7Kgc7JWqy4D6Q5pA62_lprY";
-                 googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
-             }
-            );
+            services.AddAuthentication()
+                .AddGoogle(googleOptions =>
+                 {
+                     googleOptions.ClientId = "1023560741731-s9ms2kbbnk79amoaqgcsbmdfr12s01f4.apps.googleusercontent.com";
+                     googleOptions.ClientSecret = "I7Kgc7JWqy4D6Q5pA62_lprY";
+                     googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
+                 })
+                .AddFacebook(facebookOptions =>
+                {
+                    facebookOptions.AppId = "489707118856311";
+                    facebookOptions.AppSecret = "5dd148fbd171a1928e67a3af961386f0";
+                    facebookOptions.SignInScheme = IdentityConstants.ExternalScheme;
+                })
+                .AddMicrosoftAccount(microsoftOptions =>
+                {
+                    microsoftOptions.ClientId = "fbe42ccb-baf9-4a70-a7ab-a806409878b0";
+                    //microsoftOptions.ClientId = "3cfb0cc2-d7e5-42a7-82f1-5fe4c1969075";
+                    microsoftOptions.ClientSecret = "U.~D7ep-Y9G.CXlIa-SIqQAx3gNump013P";
+                    microsoftOptions.SignInScheme = IdentityConstants.ExternalScheme;
+                });
+                 
+             
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
