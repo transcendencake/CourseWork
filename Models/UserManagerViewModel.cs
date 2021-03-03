@@ -10,13 +10,9 @@ namespace CourseWork.Models
     {
         public string Id { get; set; }
         public string Email { get; set; }
-        public List<string> Roles { get; set; }
-        public static List<IdentityRole> AllRoles;
+        public IList<string> Roles { get; set; }
 
-        static UserManagerViewModel()
-        {
-
-        }
+        public IList<IdentityRole> AllRoles { get; set; }
         public UserManagerViewModel()
         {
             Roles = new List<string>();

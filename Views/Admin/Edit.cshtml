@@ -1,0 +1,26 @@
+﻿@model CourseWork.Models.UserManagerViewModel
+
+@{
+    ViewData["Title"] = "Admin'ochka";
+}
+
+<h1>Manage @Model.Email roles</h1>
+
+<form asp-action="Edit">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="form-group custom-control custom-checkbox">
+        @foreach (var role in Model.AllRoles)
+        {
+            @if (Model.Roles.Contains(role.Name))
+            {
+                <input type="checkbox" name="roles" value="@role.Name" checked="checked" />
+            }
+            else
+            {
+                <input type="checkbox" name="roles" value="@role.Name" />
+            }
+            @role.Name <br />
+        }
+        <button type="submit" class="btn btn-danger">Save</button>
+    </div>
+</form>
