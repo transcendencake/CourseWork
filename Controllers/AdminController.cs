@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using CourseWork.Models;
+using Microsoft.Extensions.Logging;
 
 namespace CourseWork.Controllers
 {
@@ -67,6 +68,18 @@ namespace CourseWork.Controllers
                 return RedirectToAction("Index");
             }
             return NotFound();
+        }
+
+        [HttpGet]
+        public IActionResult TestMarkdown()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult TestMarkdown(ChapterEditingViewModel model)
+        {
+            Logger.DebugLogger.LogDebug(model.Text);
+            return View();
         }
     }
 }
