@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using CourseWork.Models;
 
 namespace CourseWork
 {
     public class RoleInitializer
     {
-        public static async Task InitializeAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task InitializeAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             if(!await roleManager.RoleExistsAsync("admin"))
             {
@@ -27,7 +28,7 @@ namespace CourseWork
             var adminPassword = "123456Qw.";
             if(await userManager.FindByEmailAsync(adminEmail) == null)
             {
-                IdentityUser user = new IdentityUser { Email = adminEmail, UserName = adminEmail };
+                ApplicationUser user = new ApplicationUser { Email = adminEmail, UserName = adminEmail };
                 IdentityResult result = await userManager.CreateAsync(user, adminPassword);
                 foreach (var error in result.Errors)
                 {

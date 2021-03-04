@@ -13,8 +13,8 @@ namespace CourseWork.Controllers
     public class AdminController : Controller
     {
         public RoleManager<IdentityRole> roleManager;
-        public UserManager<IdentityUser> userManager;
-        public AdminController(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public UserManager<ApplicationUser> userManager;
+        public AdminController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
@@ -25,25 +25,25 @@ namespace CourseWork.Controllers
         }
         public async Task<IActionResult> Delete(string id)
         {
-            IdentityUser user = await userManager.FindByIdAsync(id);
+            ApplicationUser user = await userManager.FindByIdAsync(id);
             if (user != null) await userManager.DeleteAsync(user);
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> Block(string id)
         {
-            IdentityUser user = await userManager.FindByIdAsync(id);
+            ApplicationUser user = await userManager.FindByIdAsync(id);
             await userManager.SetLockoutEndDateAsync(user, DateTime.Now.AddYears(1));
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> Unblock(string id)
         {
-            IdentityUser user = await userManager.FindByIdAsync(id);
+            ApplicationUser user = await userManager.FindByIdAsync(id);
             await userManager.SetLockoutEndDateAsync(user, null);
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> Edit (string id)
         {
-            IdentityUser user = await userManager.FindByIdAsync(id);
+            ApplicationUser user = await userManager.FindByIdAsync(id);
             if(user != null)
             {
                 UserManagerViewModel model = new UserManagerViewModel { 
@@ -56,7 +56,7 @@ namespace CourseWork.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(string id, List<string> roles)
         {
-            IdentityUser user = await userManager.FindByIdAsync(id);
+            ApplicationUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 var previousRoles = await userManager.GetRolesAsync(user);

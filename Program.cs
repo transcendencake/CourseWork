@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using CourseWork.Models;
 
 namespace CourseWork
 {
@@ -21,7 +22,7 @@ namespace CourseWork
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                     await RoleInitializer.InitializeAsync(userManager, rolesManager);
                 }

@@ -1,4 +1,5 @@
 using CourseWork.Data;
+using CourseWork.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -46,7 +47,7 @@ namespace CourseWork
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services
-                .AddIdentity<IdentityUser, IdentityRole>(options =>
+                .AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                 })
