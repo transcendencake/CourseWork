@@ -4,14 +4,16 @@ using CourseWork.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CourseWork.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210305080751_Add_models")]
+    partial class Add_models
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,7 +139,10 @@ namespace CourseWork.Data.Migrations
                     b.Property<string>("ApplicationUserID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BookId")
+                    b.Property<string>("BookId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("BookId1")
                         .HasColumnType("int");
 
                     b.Property<int>("Mark")
@@ -145,7 +150,7 @@ namespace CourseWork.Data.Migrations
 
                     b.HasKey("ApplicationUserID", "BookId");
 
-                    b.HasIndex("BookId");
+                    b.HasIndex("BookId1");
 
                     b.ToTable("Rating");
                 });
@@ -327,9 +332,7 @@ namespace CourseWork.Data.Migrations
 
                     b.HasOne("CourseWork.Models.Book", "Book")
                         .WithMany("Ratings")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BookId1");
                 });
 
             modelBuilder.Entity("CourseWork.Models.Tag", b =>
