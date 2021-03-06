@@ -30,7 +30,7 @@ namespace CourseWork.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string Genre { get; set; }
-        public List<Tag> Tags { get; set; }
+        public List<Tag> Tags { get; set; } = new List<Tag>();
         public List<Rating> Ratings { get; set; }
         public DateTime UploadDate { get; set; }
         public DateTime UpdateDate { get; set; }

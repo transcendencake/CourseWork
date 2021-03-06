@@ -8,6 +8,7 @@ using CourseWork.Models;
 using Microsoft.Extensions.Logging;
 using CourseWork.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CourseWork.Controllers
 {
@@ -37,11 +38,59 @@ namespace CourseWork.Controllers
             ViewBag.UserId = userId;
             return View(books);
         }
+        [Authorize]
         [HttpGet]
-        public IActionResult AddBook()
+        public IActionResult AddBook(string userId)
         {
-
+            ViewBag.UserId = userId;
+            ViewBag.Tags = String.Join(',', dbContext.Tags.Select(tag => tag.Value));
+            ViewBag.Genres = new SelectList(Enum.GetNames(typeof(Genres)));
             return View();
         }
+        [HttpPost]
+        public IActionResult AddBook(BookAddViewModel model)
+        {
+            model.Book.UpdateDate = DateTime.Now;
+            model.Book.UploadDate = DateTime.Now;
+            dbContext.Books.Add(model.Book);
+
+            Logger.DebugLogger.LogDebug(model.Tags);
+
+            model.Book.Tags.AddRange(GetTagsToAdd(model.Tags));
+
+            dbContext.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        private List<Tag> GetTagsToAdd(string inputTags)
+        {
+            var inputTextArr = NormalizeTags(inputTags);
+            var result = new List<Tag>();
+            foreach (var tag in inputTextArr)
+            {
+                Tag foundTag = dbContext.Tags.Find(tag);
+                if (foundTag != null) result.Add(foundTag);
+                else
+                {
+                    var newTag = new Tag { Value = tag };
+                    result.Add(newTag);
+                    dbContext.Tags.Add(newTag);                    
+                }
+            }
+            dbContext.SaveChanges();
+            return result;
+        }
+        private string[] NormalizeTags(string tags)
+        {
+            var tagsArr = tags.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            var result = new string[tagsArr.Length];
+            for (int i = 0; i < tagsArr.Length; i++)
+            {
+                result[i] = tagsArr[i].Split('"')[3];
+            }
+            return result;
+        }
+
     }
 }
