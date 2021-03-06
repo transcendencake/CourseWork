@@ -1,5 +1,7 @@
-﻿using CourseWork.Models;
+﻿using CourseWork.Data;
+using CourseWork.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,16 +13,51 @@ namespace CourseWork.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private const int SelectionSize = 5;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ILogger<HomeController> _logger;
+        private ApplicationDbContext dbContext;
+
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
-        }
-
-        public IActionResult Index()
+            dbContext = applicationDbContext;
+        }          
+        [HttpGet]
+        public IActionResult ReadBook(int bookId)
         {
             return View();
+        }
+        public IActionResult Index()
+        {
+            var books = dbContext.Books
+                .Include(book => book.Ratings).ToList();
+            ViewBag.LastUpdateBooks = SortByUpdateDate(books, SelectionSize);
+            ViewBag.HighRatingBooks = SortByAverageRating(books, SelectionSize);
+            return View();
+        }
+        private List<Book> SortByUpdateDate(List<Book> books, int selectionSize)
+        {
+            var sortedList = (from book in books orderby book.UpdateDate descending select book)
+                .Take(selectionSize)
+                .ToList();
+            return sortedList;
+        }
+        private List<Book> SortByAverageRating(List<Book> books, int selectionSize)
+        {
+            var sortedList = (from book in books orderby GetAverageRating(book.Ratings) descending select book)
+                .Take(selectionSize)
+                .ToList();
+            return sortedList;
+        }
+        private float GetAverageRating(List<Rating> ratings)
+        {
+            float totalRating = 0;
+            foreach (var rating in ratings)
+            {
+                totalRating += rating.Mark;
+            }
+            return totalRating / ratings.Count;
         }
 
         public IActionResult Privacy()

@@ -62,6 +62,21 @@ namespace CourseWork.Controllers
 
             return RedirectToAction("Index");
         }
+        [HttpGet]
+        public async Task<IActionResult> DeleteBook(int bookId)
+        {
+            var book = dbContext.Books.Find(bookId);
+            if (book == null) return NotFound();
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            if (HttpContext.User.IsInRole("admin") || user.Id == book.ApplicationUserId)
+            {
+                dbContext.Books.Remove(book);
+                dbContext.SaveChanges();
+            }        
+
+            return RedirectToAction("Index");
+        }
 
         private List<Tag> GetTagsToAdd(string inputTags)
         {
