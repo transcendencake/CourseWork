@@ -68,16 +68,51 @@ namespace CourseWork.Controllers
             var book = dbContext.Books.Find(bookId);
             if (book == null) return NotFound();
 
-            var user = await userManager.GetUserAsync(HttpContext.User);
-            if (HttpContext.User.IsInRole("admin") || user.Id == book.ApplicationUserId)
+            if (await CheckBookAuthority(book.ApplicationUserId))
             {
                 dbContext.Books.Remove(book);
                 dbContext.SaveChanges();
-            }        
+            }                 
 
             return RedirectToAction("Index");
         }
+        [HttpGet]
+        public async Task<IActionResult> EditBook(Book book, int? chapterNum = null)
+        {
+            if(await CheckBookAuthority(book.ApplicationUserId))
+            {
+                ViewBag.Book = book;
+                ViewBag.Chapters = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count() + 10;
+                Chapter chapter = null;
+                if (chapterNum != null)
+                {
+                    chapter = dbContext.Chapters.First(chapter => chapter.BookId == book.Id && chapter.ChapterNum == chapterNum);
+                }
+                return View(chapter);
+            }
+            else
+            {
+                return NotFound();
+            }            
+        }
 
+        [HttpPost]
+        public JsonResult ChangeChaptersOrder(int was, int become)
+        {
+            //not implemented
+            string result = was.ToString() + "   " + become.ToString();
+            return Json(result);
+        }
+
+
+
+        private async Task<bool> CheckBookAuthority(string bookAuthorId)
+        {           
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            if (HttpContext.User.IsInRole("admin") || user.Id == bookAuthorId)
+                return true;
+            else return false;
+        }
         private List<Tag> GetTagsToAdd(string inputTags)
         {
             var inputTextArr = NormalizeTags(inputTags);

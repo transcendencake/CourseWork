@@ -37,7 +37,7 @@
                         @Html.DisplayFor(modelItem => item.UpdateDate)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Edit", "EditBook", new { book = item }) |
                         @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                         @Html.ActionLink("Delete", "DeleteBook", new { bookId = item.Id })
                     </td>

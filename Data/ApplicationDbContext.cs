@@ -11,6 +11,7 @@ namespace CourseWork.Data
     {
         public DbSet<Book> Books { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<Chapter> Chapters { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

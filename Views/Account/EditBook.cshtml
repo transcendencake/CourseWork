@@ -1,0 +1,84 @@
+﻿@model CourseWork.Models.Chapter
+
+<link rel="stylesheet" href="~/css/site.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<body>
+
+    @if (Model != null)
+    {
+        <form asp-action="Edit">
+            <input type="hidden" id="chapterNum" value="@Model.ChapterNum" />
+            <textarea asp-for="Text" id="EditingArea">@Model.Text</textarea>
+            <button type="submit" class="btn btn-danger">Save</button>
+        </form>
+    }
+    else
+    {
+        <input type="hidden" id="chapterNum" value="0" />
+        <textarea disabled id="EditingArea">Choose or add chapter to edit</textarea>
+    }
+
+    <ul class='list-group list-group-horizontal chaptersList' id="chaptersList">
+        @for (int i = 1; i <= ViewBag.Chapters; i++)
+        {
+            <li class="list-group-item">
+                <span class="my-handle">:: </span>
+                <a asp-action="EditBook" asp-route-chapterNum="@i" asp-route-book="@ViewBag.Book">@i</a>
+            </li>
+        }
+    </ul>
+</body>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/sortable.js"></script>
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>
+    var simplemde = new SimpleMDE({
+        element: document.getElementById("EditingArea"),
+        spellChecker: false,
+        toolbar: [{
+            name: "bold",
+            action: SimpleMDE.toggleBold,
+            className: "fa fa-bold btn-info",
+            title: "Bold",
+        }
+        ],
+    });
+
+    var list = document.getElementById('chaptersList');
+    Sortable.create(list, {
+        handle: ".my-handle",
+        animation: 150,
+        disabled: $('#chapterNum').val() != 0,
+        onEnd: function (evt) {
+            var data = { was: evt.oldIndex, become: evt.newIndex };
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ChangeChaptersOrder","Account")',
+                contentType: 'application/x-www-form-urlencoded',
+                data: data,
+                success: function (result) {
+                    SortChaptersList();
+                    console.log(result);
+                }
+            })
+        },
+    });    
+
+    function SortChaptersList() {
+        var items = $('#chaptersList > li').get();
+        console.log(items);
+        items.sort(function (a, b) {
+            var keyA = parseInt($(a.children[1]).text());
+            var keyB = parseInt($(b.children[1]).text());
+
+            if (keyA < keyB) return -1;
+            if (keyA > keyB) return 1;
+            return 0;
+        });
+        var list = $('#chaptersList');
+        $.each(items, function (i, li) {
+            list.append(li);
+        });
+    }
+</script>
