@@ -1,0 +1,67 @@
+﻿@model CourseWork.Models.BookAddViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/tagify.css">
+</head>
+
+<body>
+
+    <h4>Book</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <input type="hidden" id="customInput" value="@ViewBag.tags" />
+            <form asp-action="AddBook">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input type="hidden" asp-for="Book.ApplicationUserId" class="form-control" value="@ViewBag.UserId" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Book.Name" class="control-label"></label>
+                    <input asp-for="Book.Name" class="form-control" />
+                    <span asp-validation-for="Book.Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Book.Description" class="control-label"></label>
+                    <textarea asp-for="Book.Description" class="form-control"></textarea>
+                    <span asp-validation-for="Book.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Book.Genre" class="control-label"></label>
+                    <select asp-for="Book.Genre" asp-items="@ViewBag.Genres" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Book.Tags" class="control-label"></label>
+                    <input asp-for="Tags" placeholder='write some tags' value='' class="form-control tags" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/tagify.min.js"></script>
+<script>
+        var tags = $("#customInput")[0].getAttribute("value");
+        console.log(tags);
+        var input = $(".tags")[0],
+            // init Tagify script on the above inputs
+            tagify = new Tagify(input, {
+                whitelist: tags.split(','), //
+                maxTags: 10,
+                dropdown: {
+                    maxItems: 20,           // <- mixumum allowed rendered suggestions
+                    classname: "tags-look", // <- custom classname for this dropdown, so it could be targeted
+                    enabled: 0,             // <- show suggestions on focus
+                    closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+                }
+            })
+</script>

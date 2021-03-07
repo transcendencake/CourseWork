@@ -22,14 +22,14 @@
 @foreach (var item in Model) {
         <tr>
             <th scope="row">
-                <a asp-area="" asp-controller="Admin" asp-action="Page">@Html.DisplayFor(modelItem => item.Email)</a>
+                <a asp-area="" asp-controller="Account" asp-action="Index" asp-route-userId="@item.Id">@Html.DisplayFor(modelItem => item.Email)</a>
             </th>
             <td>
                 @Html.DisplayFor(modelItem => item.LockoutEnd)
             </td>
             <td>
-                <a asp-area="" asp-controller="Admin" asp-action="Edit" asp-route-id="@item.Id">Edit</a>|
-                <a asp-area="" asp-controller="Admin" asp-action="Delete" asp-route-id="@item.Id">Delete</a>|
+                <a asp-area="" asp-controller="Admin" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-area="" asp-controller="Admin" asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
                 @if (item.LockoutEnd > DateTime.Now)
                 {
                     <a asp-area="" asp-controller="Admin" asp-action="Unblock" asp-route-id="@item.Id">Unblock</a>

@@ -2,6 +2,21 @@
     ViewData["Title"] = "Home Page";
 }
 
+<h3>Last updates:</h3>
+
+@foreach (var book in ViewBag.LastUpdateBooks)
+{
+    <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
+    <p>@book.Description</p>
+}
+
+<h3>Best ratings:</h3>
+@foreach (var book in ViewBag.HighRatingBooks)
+{
+    <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
+    <p>@book.Description</p>
+}
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
