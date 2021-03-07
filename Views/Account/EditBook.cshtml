@@ -23,7 +23,7 @@
         {
             <li class="list-group-item">
                 <span class="my-handle">:: </span>
-                <a asp-action="EditBook" asp-route-chapterNum="@i" asp-route-book="@ViewBag.Book">@i</a>
+                <a asp-action="EditBook" asp-route-bookId="@ViewBag.BookId" asp-route-chapterNum="@i" >@i</a>
             </li>
         }
     </ul>

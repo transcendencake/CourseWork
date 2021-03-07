@@ -58,6 +58,8 @@ namespace CourseWork.Controllers
 
             model.Book.Tags.AddRange(GetTagsToAdd(model.Tags));
 
+            AddChapter(model.Book, 1, null);
+
             dbContext.SaveChanges();
 
             return RedirectToAction("Index");
@@ -77,17 +79,19 @@ namespace CourseWork.Controllers
             return RedirectToAction("Index");
         }
         [HttpGet]
-        public async Task<IActionResult> EditBook(Book book, int? chapterNum = null)
+        public async Task<IActionResult> EditBook(int bookId, int? chapterNum = null)
         {
+            var book = dbContext.Books.Find(bookId);
             if(await CheckBookAuthority(book.ApplicationUserId))
             {
-                ViewBag.Book = book;
-                ViewBag.Chapters = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count() + 10;
+                ViewBag.BookId = bookId;
+                ViewBag.Chapters = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count();
                 Chapter chapter = null;
                 if (chapterNum != null)
                 {
-                    chapter = dbContext.Chapters.First(chapter => chapter.BookId == book.Id && chapter.ChapterNum == chapterNum);
+                    chapter = dbContext.Chapters.Find( book.Id, chapterNum);
                 }
+
                 return View(chapter);
             }
             else
@@ -104,7 +108,12 @@ namespace CourseWork.Controllers
             return Json(result);
         }
 
-
+        private void AddChapter(Book book, int chapterNum, string text)
+        {
+            var chapter = new Chapter { Book = book, ChapterNum = chapterNum, Text = text, BookId = book.Id };
+            dbContext.Chapters.Add(chapter);
+            dbContext.SaveChanges();
+        }
 
         private async Task<bool> CheckBookAuthority(string bookAuthorId)
         {           
@@ -133,9 +142,10 @@ namespace CourseWork.Controllers
         }
         private string[] NormalizeTags(string tags)
         {
-            var tagsArr = tags.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            var result = new string[tagsArr.Length];
-            for (int i = 0; i < tagsArr.Length; i++)
+            string[] tagsArr = tags?.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            int length = tagsArr == null ? 0 : tagsArr.Length;
+            var result = new string[length];
+            for (int i = 0; i < length; i++)
             {
                 result[i] = tagsArr[i].Split('"')[3];
             }
