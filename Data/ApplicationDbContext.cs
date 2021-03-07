@@ -20,7 +20,7 @@ namespace CourseWork.Data
         {
             base.OnModelCreating(builder);
             builder.Entity<Chapter>()
-                .HasKey(c => new {c.BookId, c.ChapterNum});
+                .HasKey(c => new {c.Id});
             builder.Entity<Rating>()
                 .HasKey(c => new { c.ApplicationUserID, c.BookId });
             builder.Entity<Book>()

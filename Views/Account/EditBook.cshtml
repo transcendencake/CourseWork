@@ -3,27 +3,31 @@
 <link rel="stylesheet" href="~/css/site.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <body>
-
+    <input type="hidden" id="customInput" value="@ViewBag.BookId" />
     @if (Model != null)
     {
         <form asp-action="Edit">
-            <input type="hidden" id="chapterNum" value="@Model.ChapterNum" />
+            <input type="hidden" id="chapterId" asp-for="Id" value="@Model.Id" />
             <textarea asp-for="Text" id="EditingArea">@Model.Text</textarea>
-            <button type="submit" class="btn btn-danger">Save</button>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-danger">Save</button>
+                <a asp-action="DeleteChapter" asp-route-bookId="@ViewBag.BookId"
+                   asp-route-chapterId="@Model.Id" class="btn btn-danger">Delete chapter</a>
+            </div>
         </form>
     }
     else
     {
-        <input type="hidden" id="chapterNum" value="0" />
         <textarea disabled id="EditingArea">Choose or add chapter to edit</textarea>
     }
+    <a asp-action="NewChapter" asp-route-bookId="@ViewBag.BookId" class="btn btn-danger">Add chapter</a>
 
     <ul class='list-group list-group-horizontal chaptersList' id="chaptersList">
         @for (int i = 1; i <= ViewBag.Chapters; i++)
         {
             <li class="list-group-item">
                 <span class="my-handle">:: </span>
-                <a asp-action="EditBook" asp-route-bookId="@ViewBag.BookId" asp-route-chapterNum="@i" >@i</a>
+                <a asp-action="EditBook" asp-route-bookId="@ViewBag.BookId" asp-route-chapterNum="@i">@i</a>
             </li>
         }
     </ul>
@@ -49,9 +53,8 @@
     Sortable.create(list, {
         handle: ".my-handle",
         animation: 150,
-        disabled: $('#chapterNum').val() != 0,
         onEnd: function (evt) {
-            var data = { was: evt.oldIndex, become: evt.newIndex };
+            var data = {bookId: $('#customInput').val(), was: evt.oldIndex, become: evt.newIndex };
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("ChangeChaptersOrder","Account")',

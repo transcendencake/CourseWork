@@ -81,15 +81,15 @@ namespace CourseWork.Controllers
         [HttpGet]
         public async Task<IActionResult> EditBook(int bookId, int? chapterNum = null)
         {
-            var book = dbContext.Books.Find(bookId);
-            if(await CheckBookAuthority(book.ApplicationUserId))
+            var book = dbContext.Books.Find(bookId);            
+            if (await CheckBookAuthority(book.ApplicationUserId))
             {
                 ViewBag.BookId = bookId;
                 ViewBag.Chapters = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count();
                 Chapter chapter = null;
                 if (chapterNum != null)
                 {
-                    chapter = dbContext.Chapters.Find( book.Id, chapterNum);
+                    chapter = dbContext.Chapters.FirstOrDefault(chapter => chapter.BookId == book.Id && chapter.ChapterNum == chapterNum);
                 }
 
                 return View(chapter);
@@ -99,15 +99,84 @@ namespace CourseWork.Controllers
                 return NotFound();
             }            
         }
+        [HttpGet]
+        public async Task<IActionResult> NewChapter(int bookId)
+        {
+            var book = dbContext.Books.Find(bookId);
+            if (await CheckBookAuthority(book.ApplicationUserId))
+            {
+                var newChapterNum = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count() + 1;
+                AddChapter(book, newChapterNum, null);
+
+                return RedirectToAction("EditBook", new { bookId = bookId, chapterNum = newChapterNum});
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> DeleteChapter(int bookId, int chapterId)
+        {
+            var book = dbContext.Books.Find(bookId);
+            if (await CheckBookAuthority(book.ApplicationUserId))
+            {
+                DeleteAndReorder(bookId, chapterId);
+
+                return RedirectToAction("EditBook", new { bookId = bookId});
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
 
         [HttpPost]
-        public JsonResult ChangeChaptersOrder(int was, int become)
+        public JsonResult ChangeChaptersOrder(int bookId, int was, int become)
         {
-            //not implemented
-            string result = was.ToString() + "   " + become.ToString();
+             string result = bookId.ToString() + "  " + was.ToString() + "   " + become.ToString();
+            if (was == become)
+            {
+                return Json(result);
+            }
+            else
+            {
+                Chapter[] chapters = dbContext.Chapters.Where(c => c.BookId == bookId).OrderBy(c => c.ChapterNum).ToArray();
+                if (was < become)
+                {
+                    for (int i = was + 1; i <= become; i++)
+                    {
+                        chapters[i].ChapterNum--;
+                    }                    
+                }
+                else
+                {
+                    for (int i = become; i < was; i++)
+                    {
+                        chapters[i].ChapterNum++;
+                    }
+                }
+                chapters[was].ChapterNum = become + 1;
+                dbContext.SaveChanges();
+            }            
             return Json(result);
         }
 
+        private void DeleteAndReorder(int bookId, int chapterId)
+        {
+            var chapter = dbContext.Chapters.Find(chapterId);            
+            if (chapter != null)
+            {
+                int chapterNum = chapter.ChapterNum;
+                dbContext.Chapters.Remove(chapter);
+                Chapter[] chapters = dbContext.Chapters.Where(c => c.BookId == bookId).ToArray();
+                for (int i = 0; i < chapters.Length; i++)
+                {
+                    if (chapters[i].ChapterNum > chapterNum) chapters[i].ChapterNum--;
+                }
+                dbContext.SaveChanges();
+            }                
+        }
         private void AddChapter(Book book, int chapterNum, string text)
         {
             var chapter = new Chapter { Book = book, ChapterNum = chapterNum, Text = text, BookId = book.Id };

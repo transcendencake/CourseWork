@@ -44,6 +44,7 @@ namespace CourseWork.Models
     }
     public class Chapter
     {
+        public int Id { get; set; }
         public int BookId { get; set; }
         public int ChapterNum { get; set; }
         public string Text { get; set; }
