@@ -6,7 +6,7 @@
     <input type="hidden" id="customInput" value="@ViewBag.BookId" />
     @if (Model != null)
     {
-        <form asp-action="Edit">
+        <form asp-action="EditBook">
             <input type="hidden" id="chapterId" asp-for="Id" value="@Model.Id" />
             <textarea asp-for="Text" id="EditingArea">@Model.Text</textarea>
             <div class="btn-group">

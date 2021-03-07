@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using CourseWork.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace CourseWork.Controllers
 {
@@ -52,6 +53,7 @@ namespace CourseWork.Controllers
         {
             model.Book.UpdateDate = DateTime.Now;
             model.Book.UploadDate = DateTime.Now;
+
             dbContext.Books.Add(model.Book);
 
             Logger.DebugLogger.LogDebug(model.Tags);
@@ -62,7 +64,7 @@ namespace CourseWork.Controllers
 
             dbContext.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { userId = model.Book.ApplicationUserId});
         }
         [HttpGet]
         public async Task<IActionResult> DeleteBook(int bookId)
@@ -84,6 +86,7 @@ namespace CourseWork.Controllers
             var book = dbContext.Books.Find(bookId);            
             if (await CheckBookAuthority(book.ApplicationUserId))
             {
+                book.UpdateDate = DateTime.Now;
                 ViewBag.BookId = bookId;
                 ViewBag.Chapters = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count();
                 Chapter chapter = null;
@@ -98,6 +101,18 @@ namespace CourseWork.Controllers
             {
                 return NotFound();
             }            
+        }
+        [HttpPost]
+        public IActionResult EditBook(Chapter model)
+        {
+            Chapter chapter = dbContext.Chapters.Find(model.Id);
+            if (chapter != null)
+            {
+                chapter.Text = model.Text;
+                dbContext.SaveChanges();
+                return RedirectToAction("EditBook", new { bookId = chapter.BookId });
+            }
+            return NotFound();
         }
         [HttpGet]
         public async Task<IActionResult> NewChapter(int bookId)
@@ -161,7 +176,36 @@ namespace CourseWork.Controllers
             }            
             return Json(result);
         }
+        [HttpGet]
+        public async Task<IActionResult> EditTitle(int bookId)
+        {
+            var book = dbContext.Books.Include(book => book.Tags).FirstOrDefault(book => book.Id == bookId);
+            if (await CheckBookAuthority(book.ApplicationUserId))
+            {
+                ViewBag.Tags = String.Join(',', dbContext.Tags.Select(tag => tag.Value));
+                ViewBag.Genres = new SelectList(Enum.GetNames(typeof(Genres)));
+            }
+            else
+            {
+                return NotFound();
+            }
+            return View(new BookAddViewModel { Book = book });
+        }
+        [HttpPost]
+        public IActionResult EditTitle(BookAddViewModel model)
+        {            
+            var book = dbContext.Books.Include(book => book.Tags).FirstOrDefault(book => book.Id == model.Book.Id);
+            book.Name = model.Book.Name;
+            book.UpdateDate = DateTime.Now;
+            book.Genre = model.Book.Genre;
+            book.Description = model.Book.Description;
 
+            EditBookTags(book, book.Tags, model.Tags);
+
+            dbContext.SaveChanges();
+
+            return RedirectToAction("Index", new { userId = model.Book.ApplicationUserId });
+        }
         private void DeleteAndReorder(int bookId, int chapterId)
         {
             var chapter = dbContext.Chapters.Find(chapterId);            
@@ -208,6 +252,15 @@ namespace CourseWork.Controllers
             }
             dbContext.SaveChanges();
             return result;
+        }
+        private void EditBookTags(Book book, List<Tag> was, string become)
+        {
+            var becomeTags = GetTagsToAdd(become);
+            List<Tag> newTags = becomeTags.Except(was).ToList();
+            List<Tag> tagsToDelete = was.Except(becomeTags).ToList();
+
+            book.Tags.AddRange(newTags);
+            book.Tags.RemoveAll(tag => tagsToDelete.Find(c => c.Value == tag.Value) != null);
         }
         private string[] NormalizeTags(string tags)
         {
