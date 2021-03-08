@@ -42,6 +42,12 @@ namespace CourseWork.Controllers
             ViewBag.BookId = bookId;
             return View(model);
         }
+        [HttpPost]
+        public async Task<JsonResult> LikeClick(int bookId, int chapterNum)
+        {
+            Chapter chapter = dbContext.Chapters.FirstOrDefault(c => c.BookId == bookId && c.ChapterNum == chapterNum);
+            return Json(await AddOrDeleteLike(chapter.Id));
+        }
         private async Task<bool> CheckUserLiked(int chapterId)
         {
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -51,6 +57,21 @@ namespace CourseWork.Controllers
                     if (dbContext.Likes.Find(chapterId, user.Id) != null) return true;
             }
             return false;
+        }
+        private async Task<bool> AddOrDeleteLike(int chapterId)
+        {
+            var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var result = false;
+            Like foundLike = dbContext.Likes.Find(chapterId, user.Id);
+            if (foundLike != null) dbContext.Likes.Remove(foundLike); 
+            else
+            {
+                Like newLike = new Like { ChapterId = chapterId, UserId = user.Id };
+                dbContext.Likes.Add(newLike);
+                result = true;
+            }
+            dbContext.SaveChanges();
+            return result;
         }
         public IActionResult Index(string tags)
         {
