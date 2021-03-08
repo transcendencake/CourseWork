@@ -12,6 +12,7 @@ namespace CourseWork.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Chapter> Chapters { get; set; }
+        public DbSet<Like> Likes { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -30,6 +31,8 @@ namespace CourseWork.Data
                 .HasKey(c => new { c.Value });
             builder.Entity<Comment>()
                 .HasKey(c => new { c.Id });
+            builder.Entity<Like>()
+                .HasKey(c => new { c.ChapterId, c.UserId });
 ;        }
     }
 }

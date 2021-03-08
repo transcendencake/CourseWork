@@ -50,10 +50,16 @@ namespace CourseWork.Models
         public string Text { get; set; }
         public Book Book { get; set; }
     }
+    public class Like
+    {
+        public int ChapterId { get; set; }
+        public string UserId { get; set; }
+    }
     public class Comment
     {
         public int Id { get; set; }
         public int BookId { get; set; }
+        public string Author { get; set; }
         public string Text { get; set; }
         public DateTime DateTime { get; set; }
     }

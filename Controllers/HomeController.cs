@@ -1,5 +1,6 @@
 ﻿using CourseWork.Data;
 using CourseWork.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace CourseWork.Controllers
 {
     public class HomeController : Controller
@@ -16,17 +18,39 @@ namespace CourseWork.Controllers
         private const int SelectionSize = 5;
 
         private readonly ILogger<HomeController> _logger;
+        private UserManager<ApplicationUser> userManager;
         private ApplicationDbContext dbContext;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
         {
+            this.userManager = userManager;
             _logger = logger;
             dbContext = applicationDbContext;
         }          
-        [HttpGet]
-        public IActionResult ReadBook(int bookId)
+        public async Task<IActionResult> ReadBook(int bookId, int? chapterNum)
         {
-            return View();
+            chapterNum = chapterNum ?? 1;
+            Chapter chapter = dbContext.Chapters.FirstOrDefault(c => c.BookId == bookId && c.ChapterNum == chapterNum);            
+            if (chapter == null) return NotFound();
+            PageViewModel model = new PageViewModel
+            {
+                CurrentPage = chapterNum.GetValueOrDefault(),
+                TotalPages = dbContext.Chapters.Where(c => c.BookId == bookId).Count(),
+                Liked = await CheckUserLiked(chapter.Id),
+                Text = MarkdownUtils.MarkdownParser(chapter.Text)
+            };
+            ViewBag.BookId = bookId;
+            return View(model);
+        }
+        private async Task<bool> CheckUserLiked(int chapterId)
+        {
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                if (user != null)
+                    if (dbContext.Likes.Find(chapterId, user.Id) != null) return true;
+            }
+            return false;
         }
         public IActionResult Index(string tags)
         {

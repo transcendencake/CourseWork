@@ -87,6 +87,7 @@ namespace CourseWork.Controllers
             if (await CheckBookAuthority(book.ApplicationUserId))
             {
                 book.UpdateDate = DateTime.Now;
+                dbContext.SaveChanges();
                 ViewBag.BookId = bookId;
                 ViewBag.Chapters = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count();
                 Chapter chapter = null;
