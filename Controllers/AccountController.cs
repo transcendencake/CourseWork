@@ -237,7 +237,7 @@ namespace CourseWork.Controllers
         }
         private List<Tag> GetTagsToAdd(string inputTags)
         {
-            var inputTextArr = NormalizeTags(inputTags);
+            var inputTextArr = TagsUtils.NormalizeTags(inputTags);
             var result = new List<Tag>();
             foreach (var tag in inputTextArr)
             {
@@ -262,17 +262,5 @@ namespace CourseWork.Controllers
             book.Tags.AddRange(newTags);
             book.Tags.RemoveAll(tag => tagsToDelete.Find(c => c.Value == tag.Value) != null);
         }
-        private string[] NormalizeTags(string tags)
-        {
-            string[] tagsArr = tags?.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            int length = tagsArr == null ? 0 : tagsArr.Length;
-            var result = new string[length];
-            for (int i = 0; i < length; i++)
-            {
-                result[i] = tagsArr[i].Split('"')[3];
-            }
-            return result;
-        }
-
     }
 }

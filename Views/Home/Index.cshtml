@@ -1,23 +1,62 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<head>
+    <link rel="stylesheet" href="~/css/tagify.css">
+</head>
 
-<h3>Last updates:</h3>
+<body>
+    <input type="hidden" id="customInput" value="@ViewBag.tags" />
 
-@foreach (var book in ViewBag.LastUpdateBooks)
-{
-    <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
-    <p>@book.Description</p>
-}
+    <form asp-action="Index" class="form-inline">
+        <input class="form-control tags" name="tags" type="text" placeholder="Search by tags">
+        <button class="btn btn-secondary" type="submit">Search</button>
+    </form>
+    @if (ViewBag.ContainTags != null)
+    {
+        <h3>Results of tags search:</h3>
 
-<h3>Best ratings:</h3>
-@foreach (var book in ViewBag.HighRatingBooks)
-{
-    <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
-    <p>@book.Description</p>
-}
+        @foreach (var book in ViewBag.ContainTags)
+        {
+            <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
+            <p>@book.Description</p>
+        }
+    }
+    <h3>Last updates:</h3>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    @foreach (var book in ViewBag.LastUpdateBooks)
+    {
+        <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
+        <p>@book.Description</p>
+    }
+
+    <h3>Best ratings:</h3>
+    @foreach (var book in ViewBag.HighRatingBooks)
+    {
+        <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
+        <p>@book.Description</p>
+    }
+
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    </div>
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/tagify.min.js"></script>
+<script>
+        var tags = $("#customInput")[0].getAttribute("value");
+        console.log(tags);
+        var input = $(".tags")[0],
+            // init Tagify script on the above inputs
+            tagify = new Tagify(input, {
+                whitelist: tags.split(','), //
+                maxTags: 10,
+                dropdown: {
+                    maxItems: 20,           // <- mixumum allowed rendered suggestions
+                    classname: "add-tag-to-support-dark", // <- custom classname for this dropdown, so it could be targeted
+                    enabled: 0,             // <- show suggestions on focus
+                    closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+                }
+            })
+</script>

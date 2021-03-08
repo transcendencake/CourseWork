@@ -28,13 +28,28 @@ namespace CourseWork.Controllers
         {
             return View();
         }
-        public IActionResult Index()
+        public IActionResult Index(string tags)
         {
             var books = dbContext.Books
-                .Include(book => book.Ratings).ToList();
+                .Include(book => book.Ratings)
+                .Include(book => book.Tags)
+                .ToList();
+            if (tags != null)
+            {
+                ViewBag.ContainTags = SortByTags(books, tags, SelectionSize);
+            }
+            else ViewBag.ContainTags = null;
+            ViewBag.Tags = String.Join(',', dbContext.Tags.Select(tag => tag.Value));
             ViewBag.LastUpdateBooks = SortByUpdateDate(books, SelectionSize);
             ViewBag.HighRatingBooks = SortByAverageRating(books, SelectionSize);
             return View();
+        }
+        private List<Book> SortByTags(List<Book> books, string tags, int selectionSize)
+        {
+            var sortedList = books.Where(book => TagsUtils.NormalizeTags(tags).All(tag => book.Tags.Find(x => x.Value == tag) != null))
+                .Take(selectionSize)
+                .ToList();
+            return sortedList;
         }
         private List<Book> SortByUpdateDate(List<Book> books, int selectionSize)
         {
