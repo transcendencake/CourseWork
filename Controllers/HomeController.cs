@@ -62,6 +62,22 @@ namespace CourseWork.Controllers
             Chapter chapter = dbContext.Chapters.FirstOrDefault(c => c.BookId == bookId && c.ChapterNum == chapterNum);
             return Json(await AddOrDeleteLike(chapter.Id));
         }
+        public IActionResult Index(string tags)
+        {
+            var books = dbContext.Books
+                .Include(book => book.Ratings)
+                .Include(book => book.Tags)
+                .ToList();
+            if (tags != null)
+            {
+                ViewBag.ContainTags = SortByTags(books, tags, SelectionSize);
+            }
+            else ViewBag.ContainTags = null;
+            ViewBag.Tags = String.Join(',', dbContext.Tags.Select(tag => tag.Value));
+            ViewBag.LastUpdateBooks = SortByUpdateDate(books, SelectionSize);
+            ViewBag.HighRatingBooks = SortAndSetAverageRating(books, SelectionSize);
+            return View();
+        }
         private int? CheckUserRating(ApplicationUser user, int bookId)
         {
             if (user == null) return null;
@@ -89,22 +105,6 @@ namespace CourseWork.Controllers
             dbContext.SaveChanges();
             return result;
         }
-        public IActionResult Index(string tags)
-        {
-            var books = dbContext.Books
-                .Include(book => book.Ratings)
-                .Include(book => book.Tags)
-                .ToList();
-            if (tags != null)
-            {
-                ViewBag.ContainTags = SortByTags(books, tags, SelectionSize);
-            }
-            else ViewBag.ContainTags = null;
-            ViewBag.Tags = String.Join(',', dbContext.Tags.Select(tag => tag.Value));
-            ViewBag.LastUpdateBooks = SortByUpdateDate(books, SelectionSize);
-            ViewBag.HighRatingBooks = SortByAverageRating(books, SelectionSize);
-            return View();
-        }
         private List<Book> SortByTags(List<Book> books, string tags, int selectionSize)
         {
             var sortedList = books.Where(book => TagsUtils.NormalizeTags(tags).All(tag => book.Tags.Find(x => x.Value == tag) != null))
@@ -119,21 +119,23 @@ namespace CourseWork.Controllers
                 .ToList();
             return sortedList;
         }
-        private List<Book> SortByAverageRating(List<Book> books, int selectionSize)
+        private List<Book> SortAndSetAverageRating(List<Book> books, int selectionSize)
         {
-            var sortedList = (from book in books orderby GetAverageRating(book.Ratings) descending select book)
+            var sortedList = (from book in books orderby GetAverageRating(book.Ratings, book) descending select book)
                 .Take(selectionSize)
                 .ToList();
             return sortedList;
         }
-        private float GetAverageRating(List<Rating> ratings)
+        private float? GetAverageRating(List<Rating> ratings, Book book)
         {
-            float totalRating = 0;
+            float? totalRating = 0;
             foreach (var rating in ratings)
-            {
                 totalRating += rating.Mark;
-            }
-            return totalRating / ratings.Count;
+            var count = ratings.Count;
+            if (count == 0) totalRating = null;
+            else totalRating /= count;
+            book.AverageRating = totalRating;
+            return totalRating;
         }
 
         public IActionResult Privacy()

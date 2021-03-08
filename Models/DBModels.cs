@@ -36,6 +36,8 @@ namespace CourseWork.Models
         public DateTime UpdateDate { get; set; }
         public List<Chapter> Chapters { get; set; }
         public List<Comment> Comments { get; set; }
+        [NotMapped]
+        public float? AverageRating { get; set; }
     }
     public class Tag
     {

@@ -18,7 +18,7 @@
 
         @foreach (var book in ViewBag.ContainTags)
         {
-            <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
+            <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
             <p>@book.Description</p>
         }
     }
@@ -26,14 +26,14 @@
 
     @foreach (var book in ViewBag.LastUpdateBooks)
     {
-        <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
+        <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
         <p>@book.Description</p>
     }
 
     <h3>Best ratings:</h3>
     @foreach (var book in ViewBag.HighRatingBooks)
     {
-        <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
+        <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
         <p>@book.Description</p>
     }
 
