@@ -13,6 +13,7 @@ namespace CourseWork.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<Like> Likes { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

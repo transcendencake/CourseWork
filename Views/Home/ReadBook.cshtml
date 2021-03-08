@@ -5,7 +5,7 @@
 </head>
 <body>
     @Html.Raw(Model.Text)
-
+    <input type="hidden" id="userRatingField" value="@ViewBag.UserRating">
     <div class="form-inline">
         @if (Model.HasPrevPage)
         {
@@ -32,6 +32,7 @@
         <label class="btn btn-info">
             <input type="checkbox" id="like" checked="@Model.Liked" autocomplete="off"> Like
         </label>
+        <h1><div class="rating"></div></h1>
     }
     <div>
         <a asp-action="Index">Back to List</a>
@@ -40,7 +41,42 @@
 </body>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/rater.min.js"></script>
 <script>
+
+    var init_rate, disable;
+    var user_value = $('#userRatingField').val();
+    if (user_value != "") {
+        init_rate = user_value;
+        disable = true;
+    }
+    else {
+        init_rate = 0;
+        disable = false;
+    }
+    console.log(disable);
+    console.log(user_value);
+    var options = {
+        max_value: 5,
+        step_size: 1,
+        initial_value: init_rate,
+        symbols: {
+            utf8_star: {
+                base: '\u2606',
+                hover: '\u2605',
+                selected: '\u2605',
+            },
+        },
+        selected_symbol_type: 'utf8_star', // Must be a key from symbols
+        cursor: 'default',
+        readonly: disable,
+        change_once: true, // Determines if the rating can only be set once
+        ajax_method: 'POST',
+        url: '@Url.Action("RatingClick", "Home")',
+        additional_data: { bookId: $('#bookIdField').val() }, // Additional data to send to the server
+    };
+
+    $(".rating").rate(options);
 
     $('#like').change(function () {
         var data = { bookId: $('#bookIdField').val(), chapterNum: $('#chapterNumField').val() };
@@ -54,16 +90,5 @@
         }
         })
     })
+
 </script>
-
-
-@*$.ajax({
-    type: "POST",
-    url: '@Url.Action("ChangeChaptersOrder", "Account")',
-    contentType: 'application/x-www-form-urlencoded',
-    data: data,
-    success: function (result) {
-    SortChaptersList();
-    console.log(result);
-    }
-    })*@

@@ -27,20 +27,34 @@ namespace CourseWork.Controllers
             _logger = logger;
             dbContext = applicationDbContext;
         }          
-        public async Task<IActionResult> ReadBook(int bookId, int? chapterNum)
+        public async Task<IActionResult> ReadBook(int bookId, int? chapterNum, int? userRating)
         {
             chapterNum = chapterNum ?? 1;
             Chapter chapter = dbContext.Chapters.FirstOrDefault(c => c.BookId == bookId && c.ChapterNum == chapterNum);            
             if (chapter == null) return NotFound();
+            ApplicationUser user = null;
+            if(HttpContext.User.Identity.IsAuthenticated)
+                user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
             PageViewModel model = new PageViewModel
             {
                 CurrentPage = chapterNum.GetValueOrDefault(),
                 TotalPages = dbContext.Chapters.Where(c => c.BookId == bookId).Count(),
-                Liked = await CheckUserLiked(chapter.Id),
+                Liked = CheckUserLiked(user, chapter.Id),
                 Text = MarkdownUtils.MarkdownParser(chapter.Text)
             };
+            ViewBag.UserRating = userRating ?? CheckUserRating(user, bookId);
             ViewBag.BookId = bookId;
             return View(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> RatingClick(int value, int bookId)
+        {
+            var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var request = HttpContext.Request;
+            var rate = new Rating { ApplicationUserID = user.Id, BookId = bookId, Mark = value };
+            dbContext.Ratings.Add(rate);
+            dbContext.SaveChanges();
+            return Json(value);
         }
         [HttpPost]
         public async Task<JsonResult> LikeClick(int bookId, int chapterNum)
@@ -48,14 +62,16 @@ namespace CourseWork.Controllers
             Chapter chapter = dbContext.Chapters.FirstOrDefault(c => c.BookId == bookId && c.ChapterNum == chapterNum);
             return Json(await AddOrDeleteLike(chapter.Id));
         }
-        private async Task<bool> CheckUserLiked(int chapterId)
+        private int? CheckUserRating(ApplicationUser user, int bookId)
         {
-            if (HttpContext.User.Identity.IsAuthenticated)
-            {
-                var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-                if (user != null)
-                    if (dbContext.Likes.Find(chapterId, user.Id) != null) return true;
-            }
+            if (user == null) return null;
+            var rating = dbContext.Ratings.Find(user.Id, bookId);
+            return rating?.Mark;
+        }
+        private bool CheckUserLiked(ApplicationUser user, int chapterId)
+        {
+            if (user != null)
+                if (dbContext.Likes.Find(chapterId, user.Id) != null) return true;
             return false;
         }
         private async Task<bool> AddOrDeleteLike(int chapterId)
