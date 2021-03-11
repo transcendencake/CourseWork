@@ -9,6 +9,9 @@
         <form asp-action="EditBook">
             <input type="hidden" id="chapterId" asp-for="Id" value="@Model.Id" />
             <textarea asp-for="Text" id="EditingArea">@Model.Text</textarea>
+            <div class="file-upload-wrapper">
+                <input type="file" asp-for="PicturePath" id="input-file-now" class="file-upload" />
+            </div>
             <div class="btn-group">
                 <button type="submit" class="btn btn-danger">Save</button>
                 <a asp-action="DeleteChapter" asp-route-bookId="@ViewBag.BookId"
@@ -20,6 +23,7 @@
     {
         <textarea disabled id="EditingArea">Choose or add chapter to edit</textarea>
     }
+    
     <a asp-action="NewChapter" asp-route-bookId="@ViewBag.BookId" class="btn btn-danger">Add chapter</a>
 
     <ul class='list-group list-group-horizontal chaptersList' id="chaptersList">
@@ -45,7 +49,58 @@
             action: SimpleMDE.toggleBold,
             className: "fa fa-bold btn-info",
             title: "Bold",
-        }
+            },
+            {
+                name: "italic",
+                action: SimpleMDE.toggleItalic,
+                className: "fa fa-italic btn-info",
+                title: "Italic",
+            },
+            {
+                name: "strikethrough",
+                action: SimpleMDE.toggleStrikethrough,
+                className: "fa fa-strikethrough btn-info",
+                title: "Strikethrough",
+            },
+            {
+                name: "heading-bigger",
+                action: SimpleMDE.toggleHeadingBigger,
+                className: "fa fa-header btn-info",
+                title: "Bigger Heading",
+            },
+            "|",
+            {
+                name: "unordered-list",
+                action: SimpleMDE.toggleUnorderedList,
+                className: "fa fa-list-ul btn-info",
+                title: "Generic List",
+            },
+            {
+                name: "ordered-list",
+                action: SimpleMDE.toggleOrderedList,
+                className: "fa fa-list-ol btn-info",
+                title: "Numbered List",
+            },
+            "|",
+            {
+                name: "link",
+                action: SimpleMDE.drawLink,
+                className: "fa fa-link btn-info",
+                title: "Create Link",
+            },
+            "|",
+            {
+                name: "preview",
+                action: SimpleMDE.togglePreview,
+                className: "fa fa-eye no-disable btn-info",
+                title: "Toggle Preview",
+            },
+            {
+                name: "guide",
+                action: 'https://simplemde.com/markdown-guide',
+                className: "fa fa-question-circle btn-info",
+                title: "Markdown Guide",
+            },
         ],
     });
 

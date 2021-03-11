@@ -29,10 +29,14 @@
     </div>
     @if (Context.User.Identity.IsAuthenticated)
     {
+        <input type="hidden" id="userNameField" value="@Context.User.Identity.Name">
         <label class="btn btn-info">
             <input type="checkbox" id="like" checked="@Model.Liked" autocomplete="off"> Like
         </label>
         <h1><div class="rating"></div></h1>
+        <div id="comments"></div>
+        <input type="text" id="commentText" />
+        <input type="button" class="btn btn-primary" id="sendComment" value="Отправить" />
     }
     <div>
         <a asp-action="Index">Back to List</a>
@@ -42,8 +46,50 @@
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/rater.min.js"></script>
+<script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
 <script>
 
+    const connection = new signalR.HubConnectionBuilder().withUrl("/comments").build();
+
+    connection.on('ReceiveComment', function (bookId, userName, text) {
+        if (bookId == $('#bookIdField').val()) {
+            AppendComment(userName, text);
+        }
+    });    
+    connection.on('ReceiveAllComments', function (comments) {
+        if (comments.length > 2) {
+            let commentsArr = comments.split(";");
+            for (comment of commentsArr) {
+                comment = comment.split("|");
+                AppendComment(comment[0], comment[1]);
+            }
+        }        
+    });
+
+    function AppendComment(userName, text) {
+        let userInfoElem = document.createElement("b");
+        userInfoElem.appendChild(document.createTextNode(userName + ': '));
+
+        let commentElem = document.createElement("p");
+        commentElem.appendChild(userInfoElem);
+        commentElem.appendChild(document.createTextNode(text));
+
+        $('#comments').append(commentElem);
+    }
+
+    $('#sendComment').on("click", function (e) {
+        let text = $('#commentText').val();
+        let bookId = $('#bookIdField').val();
+        let userName = $('#userNameField').val();
+        connection.invoke("NewComment", text, Number(bookId), userName);
+    });
+
+    connection.start().then(() => {
+        let bookId = $('#bookIdField').val();
+        connection.invoke("GetAllComments", Number(bookId));
+    });    
+
+    //rating
     var init_rate, disable;
     var user_value = $('#userRatingField').val();
     if (user_value != "") {
@@ -77,7 +123,7 @@
     };
 
     $(".rating").rate(options);
-
+    //like
     $('#like').change(function () {
         var data = { bookId: $('#bookIdField').val(), chapterNum: $('#chapterNumField').val() };
         $.ajax({
