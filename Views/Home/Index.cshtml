@@ -6,40 +6,64 @@
 </head>
 
 <body>
+    <style>
+        h3 {
+            color: grey;
+        }
+
+        #bloc {
+            border: solid;
+            border-color: grey;
+        }
+
+        .tagify__dropdown__item {
+            color: black;
+        }
+    </style>
     <input type="hidden" id="customInput" value="@ViewBag.tags" />
 
     <form asp-action="Index" class="form-inline">
         <input class="form-control tags" name="tags" type="text" placeholder="Search by tags">
         <button class="btn btn-secondary" type="submit">Search</button>
     </form>
+
     @if (ViewBag.ContainTags != null)
     {
         <h3>Results of tags search:</h3>
 
         @foreach (var book in ViewBag.ContainTags)
         {
-            <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
-            <p>@book.Description</p>
+            <div id="bloc">
+                <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+                <p>@book.Description</p>
+            </div>
+            <p></p>
         }
     }
     <h3>Last updates:</h3>
 
     @foreach (var book in ViewBag.LastUpdateBooks)
     {
-        <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
-        <p>@book.Description</p>
+        <div id="bloc">
+            <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+            <p>@book.Description</p>
+        </div>
+        <p></p>
     }
 
     <h3>Best ratings:</h3>
     @foreach (var book in ViewBag.HighRatingBooks)
     {
-        <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
-        <p>@book.Description</p>
+        <div id="bloc">
+            <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+            <p>@book.Description</p>
+        </div>
+        <p></p>
     }
 
     <div class="text-center">
-        <h1 class="display-4">Welcome</h1>
-        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        <h5>Welcome</h5>
+        <p>to FunFiction</p>
     </div>
 
     @if (Context.User.Identity.IsAuthenticated)

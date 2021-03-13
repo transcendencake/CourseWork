@@ -78,6 +78,19 @@ namespace CourseWork.Controllers
             ViewBag.HighRatingBooks = SortAndSetAverageRating(books, SelectionSize);
             return View();
         }
+       
+        [HttpPost]
+        public IActionResult Search(string text)
+        {
+
+            var foundBookIds = dbContext.Chapters.Where(c => EF.Functions.FreeText(c.Text, text)).Select(c => c.BookId).Distinct()
+                .Union(dbContext.Comments.Where(c => EF.Functions.FreeText(c.Text, text)).Select(c => c.BookId).Distinct());
+            var foundBooks = dbContext.Books.Include(book => book.Ratings).Where(c => foundBookIds.Contains(c.Id));
+            foreach (var book in foundBooks) GetAverageRating(book.Ratings, book);
+            ViewBag.FoundBooks = foundBooks;
+            return View();
+        }
+        
         private int? CheckUserRating(ApplicationUser user, int bookId)
         {
             if (user == null) return null;

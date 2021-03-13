@@ -4,6 +4,12 @@
     <title>Read Book</title>
 </head>
 <body>
+    <style>
+        h3 {
+            color: grey;
+        }
+    </style>
+    <h3>Глава @Model.CurrentPage</h3>
     @Html.Raw(Model.Text)
     <input type="hidden" id="userRatingField" value="@ViewBag.UserRating">
     <div class="form-inline">
@@ -34,6 +40,7 @@
             <input type="checkbox" id="like" checked="@Model.Liked" autocomplete="off"> Like
         </label>
         <h1><div class="rating"></div></h1>
+        <h3>Reviews:</h3>
         <div id="comments"></div>
         <input type="text" id="commentText" />
         <input type="button" class="btn btn-primary" id="sendComment" value="Отправить" />
