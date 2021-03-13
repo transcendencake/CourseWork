@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,9 +15,10 @@ namespace CourseWork
         {
             container = new BlobContainerClient(connectionString, containerName);
         }
-        public static bool AddPicture(string name, FileStream picture)
+        public static bool AddPicture(string name, Stream picture)
         {
             BlobClient blob = container.GetBlobClient(name);
+            blob.DeleteIfExists(DeleteSnapshotsOption.IncludeSnapshots);
             try
             {
                 blob.Upload(picture);
@@ -27,6 +29,11 @@ namespace CourseWork
                 return false;
             }
             return true;
+        }
+        public static string GetPictureUri(string name)
+        {
+            if (name == null) return null;
+            return container.GetBlobClient(name).Uri.AbsoluteUri;
         }
     }
 }

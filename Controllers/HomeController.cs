@@ -40,7 +40,8 @@ namespace CourseWork.Controllers
                 CurrentPage = chapterNum.GetValueOrDefault(),
                 TotalPages = dbContext.Chapters.Where(c => c.BookId == bookId).Count(),
                 Liked = CheckUserLiked(user, chapter.Id),
-                Text = MarkdownUtils.MarkdownParser(chapter.Text)
+                Text = MarkdownUtils.MarkdownParser(chapter.Text),
+                Picture = StorageUtils.GetPictureUri(chapter.PicturePath)
             };
             ViewBag.UserRating = userRating ?? CheckUserRating(user, bookId);
             ViewBag.BookId = bookId;

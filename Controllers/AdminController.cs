@@ -69,17 +69,5 @@ namespace CourseWork.Controllers
             }
             return NotFound();
         }
-
-        [HttpGet]
-        public IActionResult TestMarkdown()
-        {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult TestMarkdown(ChapterEditingViewModel model)
-        {
-            Logger.DebugLogger.LogDebug(model.Text);
-            return View();
-        }
     }
 }

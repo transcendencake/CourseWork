@@ -43,7 +43,7 @@ namespace CourseWork
                 options.SupportedUICultures = cultures;
             });
 
-
+            StorageUtils.SetDefaults(Configuration.GetConnectionString("BlobConnection"), "pictures");
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));

@@ -10,6 +10,10 @@
         }
     </style>
     <h3>Глава @Model.CurrentPage</h3>
+    @if (Model.Picture != null)
+    {
+        <img src="@Model.Picture" alt="..." style="max-height: 250px">     
+    }
     @Html.Raw(Model.Text)
     <input type="hidden" id="userRatingField" value="@ViewBag.UserRating">
     <div class="form-inline">

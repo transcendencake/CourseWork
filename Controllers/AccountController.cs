@@ -10,6 +10,7 @@ using CourseWork.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace CourseWork.Controllers
 {
@@ -96,7 +97,7 @@ namespace CourseWork.Controllers
                     chapter = dbContext.Chapters.FirstOrDefault(chapter => chapter.BookId == book.Id && chapter.ChapterNum == chapterNum);
                 }
 
-                return View(chapter);
+                return View(new ChapterEditingViewModel {Chapter = chapter });
             }
             else
             {
@@ -104,12 +105,19 @@ namespace CourseWork.Controllers
             }            
         }
         [HttpPost]
-        public IActionResult EditBook(Chapter model)
+        public IActionResult EditBook(ChapterEditingViewModel model)
         {
-            Chapter chapter = dbContext.Chapters.Find(model.Id);
+            Chapter chapter = dbContext.Chapters.Find(model.Chapter.Id);
             if (chapter != null)
             {
-                chapter.Text = model.Text;
+                chapter.Text = model.Chapter.Text;
+                if (model.Picture != null)
+                {
+                    if (StorageUtils.AddPicture(chapter.Id.ToString(), model.Picture.OpenReadStream()))
+                    {
+                        chapter.PicturePath = chapter.Id.ToString();
+                    }
+                }
                 dbContext.SaveChanges();
                 return RedirectToAction("EditBook", new { bookId = chapter.BookId });
             }

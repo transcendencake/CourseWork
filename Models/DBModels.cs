@@ -50,7 +50,6 @@ namespace CourseWork.Models
         public int BookId { get; set; }
         public int ChapterNum { get; set; }
         public string Text { get; set; }
-        [NotMapped]
         public string PicturePath { get; set; }
         public Book Book { get; set; }
     }

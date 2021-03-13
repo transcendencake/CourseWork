@@ -1,21 +1,21 @@
-﻿@model CourseWork.Models.Chapter
+﻿@model CourseWork.Models.ChapterEditingViewModel
 
 <link rel="stylesheet" href="~/css/site.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <body>
     <input type="hidden" id="customInput" value="@ViewBag.BookId" />
-    @if (Model != null)
+    @if (Model.Chapter != null)
     {
-        <form asp-action="EditBook">
-            <input type="hidden" id="chapterId" asp-for="Id" value="@Model.Id" />
-            <textarea asp-for="Text" id="EditingArea">@Model.Text</textarea>
+        <form asp-action="EditBook" enctype="multipart/form-data">
+            <input type="hidden" id="chapterId" asp-for="Chapter.Id" value="@Model.Chapter.Id" />
+            <textarea asp-for="Chapter.Text" id="EditingArea">@Model.Chapter.Text</textarea>
             <div class="file-upload-wrapper">
-                <input type="file" asp-for="PicturePath" id="input-file-now" class="file-upload" />
+                <input type="file" asp-for="Picture" id="input-file-now" class="file-upload" />
             </div>
             <div class="btn-group">
                 <button type="submit" class="btn btn-danger">Save</button>
                 <a asp-action="DeleteChapter" asp-route-bookId="@ViewBag.BookId"
-                   asp-route-chapterId="@Model.Id" class="btn btn-danger">Delete chapter</a>
+                   asp-route-chapterId="@Model.Chapter.Id" class="btn btn-danger">Delete chapter</a>
             </div>
         </form>
     }
