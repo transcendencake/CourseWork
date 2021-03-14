@@ -9,6 +9,7 @@ namespace CourseWork.Models
     {
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
+        public string Title { get; set; }
         public string Text { get; set; }
         public string Picture { get; set; }
         public bool Liked { get; set; }

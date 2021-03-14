@@ -9,10 +9,11 @@
             color: grey;
         }
     </style>
-    <h3>Глава @Model.CurrentPage</h3>
+    <p></p>
+    <h3>@Model.Title</h3>
     @if (Model.Picture != null)
     {
-        <img src="@Model.Picture" alt="..." style="max-height: 250px">     
+        <img src="@Model.Picture" alt="..." style="max-height: 250px">
     }
     @Html.Raw(Model.Text)
     <input type="hidden" id="userRatingField" value="@ViewBag.UserRating">
@@ -39,6 +40,7 @@
     </div>
     @if (Context.User.Identity.IsAuthenticated)
     {
+        <p></p>
         <input type="hidden" id="userNameField" value="@Context.User.Identity.Name">
         <label class="btn btn-info">
             <input type="checkbox" id="like" checked="@Model.Liked" autocomplete="off"> Like

@@ -111,6 +111,7 @@ namespace CourseWork.Controllers
             if (chapter != null)
             {
                 chapter.Text = model.Chapter.Text;
+                chapter.Title = model.Chapter.Title;
                 if (model.Picture != null)
                 {
                     if (StorageUtils.AddPicture(chapter.Id.ToString(), model.Picture.OpenReadStream()))

@@ -6,17 +6,25 @@
     <input type="hidden" id="customInput" value="@ViewBag.BookId" />
     @if (Model.Chapter != null)
     {
-        <form asp-action="EditBook" enctype="multipart/form-data">
+        <form asp-action="EditBook" enctype="multipart/form-data">            
+            <p></p>
             <input type="hidden" id="chapterId" asp-for="Chapter.Id" value="@Model.Chapter.Id" />
+            <label asp-for="Chapter.Title" class="control-label"></label>
+            <input type="text" asp-for="Chapter.Title" value="@Model.Chapter.Title"/>
+            <p></p>
             <textarea asp-for="Chapter.Text" id="EditingArea">@Model.Chapter.Text</textarea>
-            <div class="file-upload-wrapper">
-                <input type="file" asp-for="Picture" id="input-file-now" class="file-upload" />
+            <label asp-for="Picture" class="control-label"></label>
+            <div class="custom-file">
+                <input type="file" asp-for="Picture" class="custom-file-input" id="customFile">
+                <label class="custom-file-label" for="customFile">Choose file</label>
             </div>
+            <p></p>
             <div class="btn-group">
-                <button type="submit" class="btn btn-danger">Save</button>
+                <button type="submit" class="btn btn-primary">Save</button>
                 <a asp-action="DeleteChapter" asp-route-bookId="@ViewBag.BookId"
-                   asp-route-chapterId="@Model.Chapter.Id" class="btn btn-danger">Delete chapter</a>
+                   asp-route-chapterId="@Model.Chapter.Id" class="btn btn-danger">Delete</a>
             </div>
+            <p></p>
         </form>
     }
     else
@@ -24,7 +32,7 @@
         <textarea disabled id="EditingArea">Choose or add chapter to edit</textarea>
     }
     
-    <a asp-action="NewChapter" asp-route-bookId="@ViewBag.BookId" class="btn btn-danger">Add chapter</a>
+    <a asp-action="NewChapter" asp-route-bookId="@ViewBag.BookId" class="btn btn-primary">Add chapter</a>
 
     <ul class='list-group list-group-horizontal chaptersList' id="chaptersList">
         @for (int i = 1; i <= ViewBag.Chapters; i++)
@@ -139,4 +147,8 @@
             list.append(li);
         });
     }
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
 </script>

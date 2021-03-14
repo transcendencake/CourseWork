@@ -20,7 +20,14 @@ namespace CourseWork.Models
     public enum Genres
     {
         Fiction,
-        Horror
+        Horror,
+        Thriller,
+        Romance,
+        Western,
+        Contemporary,
+        Travel,
+        Children,
+        History
     }
 
     public class Book
@@ -49,6 +56,7 @@ namespace CourseWork.Models
         public int Id { get; set; }
         public int BookId { get; set; }
         public int ChapterNum { get; set; }
+        public string Title { get; set; }
         public string Text { get; set; }
         public string PicturePath { get; set; }
         public Book Book { get; set; }
