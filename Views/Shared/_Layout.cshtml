@@ -30,8 +30,14 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["HomePage"]</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Genres"]</a>
+                            <div class="dropdown-menu">
+                                @foreach (var genre in Enum.GetNames(typeof(Genres)))
+                                {
+                                    <a asp-area="" asp-controller="Home" asp-action="SelectGenre" asp-route-genre="@genre" class="dropdown-item">@Localizer[genre]</a>
+                                }
+                            </div>
                         </li>
                         <partial name="_LoginPartial" />
                         <li class="nav-item dropdown">

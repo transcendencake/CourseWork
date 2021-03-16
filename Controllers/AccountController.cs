@@ -38,6 +38,7 @@ namespace CourseWork.Controllers
             }
             var books = dbContext.Books.Where(book => book.ApplicationUserId == userId).ToList();
             ViewBag.UserId = userId;
+            ViewBag.User = user;
             return View(books);
         }
         [Authorize]
@@ -48,6 +49,24 @@ namespace CourseWork.Controllers
             ViewBag.Tags = String.Join(',', dbContext.Tags.Select(tag => tag.Value));
             ViewBag.Genres = new SelectList(Enum.GetNames(typeof(Genres)));
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditUser(string userId, string username, string phone)
+        {
+            ApplicationUser user;
+            if (HttpContext.User.IsInRole("admin") && userId != null)
+            {
+                user = await userManager.FindByIdAsync(userId);
+            }
+            else
+            {
+                user = await userManager.GetUserAsync(HttpContext.User);
+                userId = user.Id;
+            }
+            user.UserName = username;
+            user.PhoneNumber = phone;
+            dbContext.SaveChanges();
+            return RedirectToAction("Index", new { userId = userId });
         }
         [HttpPost]
         public IActionResult AddBook(BookAddViewModel model)
@@ -68,7 +87,7 @@ namespace CourseWork.Controllers
             return RedirectToAction("Index", new { userId = model.Book.ApplicationUserId});
         }
         [HttpGet]
-        public async Task<IActionResult> DeleteBook(int bookId)
+        public async Task<IActionResult> DeleteBook(int bookId, string userId = null)
         {
             var book = dbContext.Books.Find(bookId);
             if (book == null) return NotFound();
@@ -79,7 +98,7 @@ namespace CourseWork.Controllers
                 dbContext.SaveChanges();
             }                 
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { userId = userId});
         }
         [HttpGet]
         public async Task<IActionResult> EditBook(int bookId, int? chapterNum = null)

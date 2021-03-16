@@ -35,6 +35,10 @@ namespace CourseWork.Data
                 .HasKey(c => new { c.Id });
             builder.Entity<Like>()
                 .HasKey(c => new { c.ChapterId, c.UserId });
-;        }
+            builder.Entity<ApplicationUser>()
+                .HasMany(u => u.Books)
+                .WithOne(b => b.User)
+                .OnDelete(DeleteBehavior.Cascade);
+       }
     }
 }

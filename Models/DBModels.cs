@@ -33,6 +33,7 @@ namespace CourseWork.Models
     public class Book
     {
         public string ApplicationUserId { get; set; }
+        public ApplicationUser User { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

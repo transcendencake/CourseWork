@@ -1,5 +1,5 @@
 ﻿<body>
-    <h3>Search results: </h3>
+    <h3>@Localizer[ViewBag.Genre]: </h3>
     @foreach (var book in ViewBag.FoundBooks)
     {
         <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>

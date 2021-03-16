@@ -32,10 +32,13 @@ namespace CourseWork.Controllers
             chapterNum = chapterNum ?? 1;
             Chapter chapter = dbContext.Chapters.FirstOrDefault(c => c.BookId == bookId && c.ChapterNum == chapterNum);            
             if (chapter == null) return NotFound();
+
             ApplicationUser user = null;
-            if(HttpContext.User.Identity.IsAuthenticated)
-                user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-            PageViewModel model = new PageViewModel
+            if(HttpContext.User.Identity.IsAuthenticated) user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+
+            ViewBag.UserRating = userRating ?? CheckUserRating(user, bookId);
+            ViewBag.BookId = bookId;
+            return View(new PageViewModel
             {
                 CurrentPage = chapterNum.GetValueOrDefault(),
                 TotalPages = dbContext.Chapters.Where(c => c.BookId == bookId).Count(),
@@ -43,10 +46,7 @@ namespace CourseWork.Controllers
                 Title = chapter.Title,
                 Text = MarkdownUtils.MarkdownParser(chapter.Text),
                 Picture = StorageUtils.GetPictureUri(chapter.PicturePath)
-            };
-            ViewBag.UserRating = userRating ?? CheckUserRating(user, bookId);
-            ViewBag.BookId = bookId;
-            return View(model);
+            });
         }
         [HttpPost]
         public async Task<JsonResult> RatingClick(int value, int bookId)
@@ -80,13 +80,22 @@ namespace CourseWork.Controllers
             ViewBag.HighRatingBooks = SortAndSetAverageRating(books, SelectionSize);
             return View();
         }
+        public IActionResult SelectGenre(string genre)
+        {
+            var foundBooks = dbContext.Books.Include(book => book.Ratings).Where(book => book.Genre == genre);
+            foreach (var book in foundBooks) GetAverageRating(book.Ratings, book);
+            ViewBag.FoundBooks = foundBooks;
+            ViewBag.Genre = genre;
+            return View();
+        }
        
         [HttpPost]
         public IActionResult Search(string text)
         {
 
-            var foundBookIds = dbContext.Chapters.Where(c => EF.Functions.FreeText(c.Text, text)).Select(c => c.BookId).Distinct()
-                .Union(dbContext.Comments.Where(c => EF.Functions.FreeText(c.Text, text)).Select(c => c.BookId).Distinct());
+            var foundBookIds = dbContext.Chapters.Where(c => EF.Functions.FreeText(c.Text, text) || c.Title == text).Select(c => c.BookId)
+                .Union(dbContext.Comments.Where(c => EF.Functions.FreeText(c.Text, text)).Select(c => c.BookId))
+                .Union(dbContext.Books.Where(c => c.Name == text).Select(c => c.Id)).Distinct();
             var foundBooks = dbContext.Books.Include(book => book.Ratings).Where(c => foundBookIds.Contains(c.Id));
             foreach (var book in foundBooks) GetAverageRating(book.Ratings, book);
             ViewBag.FoundBooks = foundBooks;
