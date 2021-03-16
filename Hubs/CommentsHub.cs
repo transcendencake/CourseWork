@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace CourseWork.Hubs
 {
@@ -22,7 +23,7 @@ namespace CourseWork.Hubs
         public async Task NewComment (string text, int bookId, string userName)
         {
             ApplicationUser user = await userManager.FindByNameAsync(userName);
-            if (user != null)
+            if (user != null && Regex.IsMatch(text, @"^[^\|;]+$"))
             {
                 Comment newComment = new Comment { Author = userName, BookId = bookId, Text = text, DateTime = DateTime.Now };
                 dbContext.Comments.Add(newComment);

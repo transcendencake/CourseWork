@@ -27,6 +27,15 @@ namespace CourseWork.Controllers
             _logger = logger;
             dbContext = applicationDbContext;
         }          
+        public IActionResult Contents(int bookId)
+        {
+            string[] titles = dbContext.Chapters
+                .Where(c => c.BookId == bookId)
+                .OrderBy(c => c.ChapterNum)
+                .Select(c => c.Title)
+                .ToArray();
+            return View(titles);
+        }
         public async Task<IActionResult> ReadBook(int bookId, int? chapterNum, int? userRating)
         {
             chapterNum = chapterNum ?? 1;

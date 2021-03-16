@@ -4,6 +4,7 @@
     <h3>@Localizer["User Info"]</h3>
     <div>
         <form asp-action="EditUser">
+            @Html.ValidationSummary(false)
             <input type="hidden" name="userId" value="@ViewBag.UserId" />
             <div class="form-group">
                 <label class="control-label">@Localizer["Email"]</label>
@@ -83,3 +84,6 @@
         $("#booksTable").tablesorter();
     </script>
 </body>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

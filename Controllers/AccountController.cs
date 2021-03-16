@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CourseWork.Controllers
 {
@@ -63,9 +65,18 @@ namespace CourseWork.Controllers
                 user = await userManager.GetUserAsync(HttpContext.User);
                 userId = user.Id;
             }
-            user.UserName = username;
-            user.PhoneNumber = phone;
-            dbContext.SaveChanges();
+            if (await CorrectUsername(username))
+            {
+                ChangeCommentsUsername(user.UserName, username);
+                user.UserName = username;
+            }                
+            else
+                ModelState.AddModelError("", "Invalid username");
+            if (CorrectPhone(phone))
+                user.PhoneNumber = phone;
+            else
+                ModelState.AddModelError("", "Invalid phone number");
+            await userManager.UpdateAsync(user);
             return RedirectToAction("Index", new { userId = userId });
         }
         [HttpPost]
@@ -290,6 +301,22 @@ namespace CourseWork.Controllers
 
             book.Tags.AddRange(newTags);
             book.Tags.RemoveAll(tag => tagsToDelete.Find(c => c.Value == tag.Value) != null);
+        }
+        private async Task<bool> CorrectUsername(string username)
+        {
+            if (await userManager.FindByNameAsync(username) == null && Regex.IsMatch(username, @"^\w{1,15}$"))
+                return true;
+            return false;
+        }
+        private bool CorrectPhone(string number)
+        {
+            if (Regex.IsMatch(number, @"^\+[0-9]{9,15}$"))
+                return true;
+            return false;
+        }
+        private void ChangeCommentsUsername(string was, string become)
+        {
+
         }
     }
 }

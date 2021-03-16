@@ -95,6 +95,7 @@
         let bookId = $('#bookIdField').val();
         let userName = $('#userNameField').val();
         connection.invoke("NewComment", text, Number(bookId), userName);
+        $('#commentText').val("");
     });
 
     connection.start().then(() => {
