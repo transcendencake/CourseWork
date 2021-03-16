@@ -72,10 +72,11 @@ namespace CourseWork.Controllers
             }                
             else
                 ModelState.AddModelError("", "Invalid username");
-            if (CorrectPhone(phone))
-                user.PhoneNumber = phone;
-            else
-                ModelState.AddModelError("", "Invalid phone number");
+            if (phone != null)
+                if (CorrectPhone(phone))
+                    user.PhoneNumber = phone;
+                else
+                    ModelState.AddModelError("", "Invalid phone number");
             await userManager.UpdateAsync(user);
             return RedirectToAction("Index", new { userId = userId });
         }
@@ -101,14 +102,14 @@ namespace CourseWork.Controllers
         public async Task<IActionResult> DeleteBook(int bookId, string userId = null)
         {
             var book = dbContext.Books.Find(bookId);
-            if (book == null) return NotFound();
-
+            if (book == null) return NotFound();            
             if (await CheckBookAuthority(book.ApplicationUserId))
             {
+                foreach (var chapter in dbContext.Chapters.Where(c => c.BookId == bookId))
+                    StorageUtils.DeleteChapterPic(chapter);
                 dbContext.Books.Remove(book);
                 dbContext.SaveChanges();
-            }                 
-
+            }
             return RedirectToAction("Index", new { userId = userId});
         }
         [HttpGet]
@@ -252,6 +253,7 @@ namespace CourseWork.Controllers
             if (chapter != null)
             {
                 int chapterNum = chapter.ChapterNum;
+                StorageUtils.DeleteChapterPic(chapter);
                 dbContext.Chapters.Remove(chapter);
                 Chapter[] chapters = dbContext.Chapters.Where(c => c.BookId == bookId).ToArray();
                 for (int i = 0; i < chapters.Length; i++)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using CourseWork.Models;
 using Microsoft.Extensions.Logging;
+using CourseWork.Data;
 
 namespace CourseWork.Controllers
 {
@@ -15,10 +16,12 @@ namespace CourseWork.Controllers
     {
         public RoleManager<IdentityRole> roleManager;
         public UserManager<ApplicationUser> userManager;
-        public AdminController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+        public ApplicationDbContext dbContext;
+        public AdminController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, ApplicationDbContext applicationDbContext)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
+            dbContext = applicationDbContext;
         }
         public IActionResult Index()
         {
@@ -27,8 +30,23 @@ namespace CourseWork.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             ApplicationUser user = await userManager.FindByIdAsync(id);
-            if (user != null) await userManager.DeleteAsync(user);
+            if (user != null)
+            {
+                DeleteUsersBooks(id);
+                await userManager.DeleteAsync(user);
+            }   
             return RedirectToAction("Index");
+        }
+        private void DeleteUsersBooks(string userId)
+        {
+            var books = dbContext.Books.Where(b => b.ApplicationUserId == userId).ToList();
+            foreach (var book in books)
+            {
+                foreach (var chapter in dbContext.Chapters.Where(c => c.BookId == book.Id))
+                    StorageUtils.DeleteChapterPic(chapter);                
+            }
+            dbContext.Books.RemoveRange(books);
+            dbContext.SaveChanges();
         }
         public async Task<IActionResult> Block(string id)
         {

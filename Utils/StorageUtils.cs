@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using CourseWork.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +35,16 @@ namespace CourseWork
         {
             if (name == null) return null;
             return container.GetBlobClient(name).Uri.AbsoluteUri;
+        }
+        private static void DeleteBlob(string name)
+        {
+            BlobClient blob = container.GetBlobClient(name);
+            blob.DeleteIfExists(DeleteSnapshotsOption.IncludeSnapshots);
+        }
+        public static void DeleteChapterPic(Chapter chapter)
+        {
+            if (chapter.PicturePath != null)
+                DeleteBlob(chapter.PicturePath);
         }
     }
 }
