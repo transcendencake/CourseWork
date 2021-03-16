@@ -48,7 +48,7 @@
                 {
                     <tr>
                         <td class="name">
-                            <a asp-area="" asp-controller="Home" asp-action="ReadBook" asp-route-bookId="@item.Id">@item.Name</a>
+                            <a asp-area="" asp-controller="Home" asp-action="Contents" asp-route-bookId="@item.Id">@item.Name</a>
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Genre)
@@ -84,6 +84,3 @@
         $("#booksTable").tablesorter();
     </script>
 </body>
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

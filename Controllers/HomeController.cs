@@ -34,6 +34,7 @@ namespace CourseWork.Controllers
                 .OrderBy(c => c.ChapterNum)
                 .Select(c => c.Title)
                 .ToArray();
+            ViewBag.BookId = bookId;
             return View(titles);
         }
         public async Task<IActionResult> ReadBook(int bookId, int? chapterNum, int? userRating)

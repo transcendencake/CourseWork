@@ -35,7 +35,7 @@
         @foreach (var book in ViewBag.ContainTags)
         {
             <div id="bloc">
-                <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+                <h5><a asp-action="Contents" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
                 <p>@book.Description</p>
             </div>
             <p></p>
@@ -46,7 +46,7 @@
     @foreach (var book in ViewBag.LastUpdateBooks)
     {
         <div id="bloc">
-            <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+            <h5><a asp-action="Contents" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
             <p>@book.Description</p>
         </div>
         <p></p>
@@ -56,7 +56,7 @@
     @foreach (var book in ViewBag.HighRatingBooks)
     {
         <div id="bloc">
-            <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+            <h5><a asp-action="Contents" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
             <p>@book.Description</p>
         </div>
         <p></p>
