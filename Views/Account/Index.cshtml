@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<CourseWork.Models.Book>
 
 <body>
-    <h3>@Localizer["User Info"]</h3>
+    <h3>@Localizer["UserInfo"]</h3>
     <div>
         <form asp-action="EditUser">
             @Html.ValidationSummary(false)
@@ -35,10 +35,10 @@
                         @Localizer["Genre"]
                     </th>
                     <th>
-                        @Localizer["Upload date"]
+                        @Localizer["Upload"]
                     </th>
                     <th>
-                        @Localizer["Update date"]
+                        @Localizer["Update"]
                     </th>
                     <th></th>
                 </tr>
@@ -51,7 +51,7 @@
                             <a asp-area="" asp-controller="Home" asp-action="Contents" asp-route-bookId="@item.Id">@item.Name</a>
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Genre)
+                            @Localizer[item.Genre]
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.UploadDate)
@@ -60,22 +60,22 @@
                             @Html.DisplayFor(modelItem => item.UpdateDate)
                         </td>
                         <td>
-                            @Html.ActionLink("Edit chapters", "EditBook", new { bookId = item.Id }) |
-                            @Html.ActionLink("Edit", "EditTitle", new { bookId = item.Id }) |
-                            @Html.ActionLink("Delete", "DeleteBook", new { bookId = item.Id, userId = ViewBag.UserId })
+                            <a asp-action="EditBook" asp-route-bookId="@item.Id">@Localizer["EditChapt"]</a> |
+                            <a asp-action="EditTitle" asp-route-bookId="@item.Id">@Localizer["Edit"]</a> |
+                            <a asp-action="DeleteBook" asp-route-bookId="@item.Id" asp-route-userId="@ViewBag.UserId">@Localizer["Delete"]</a>
                         </td>
                     </tr>
                 }
 
             </tbody>
         </table>
-        <a class="btn btn-primary" asp-area="" asp-controller="Account" asp-action="AddBook" asp-route-userId="@ViewBag.UserId">Add new</a>
+        <a class="btn btn-primary" asp-area="" asp-controller="Account" asp-action="AddBook" asp-route-userId="@ViewBag.UserId">@Localizer["New"]</a>
     </div>
     @if (Context.User.IsInRole("admin"))
     {
         <div>
             <p></p>
-            <a class="btn btn-danger" asp-area="" asp-controller="Admin" asp-action="Index">@Localizer["Admin view"]</a>
+            <a class="btn btn-danger" asp-area="" asp-controller="Admin" asp-action="Index">@Localizer["Admin"]</a>
         </div>
     }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

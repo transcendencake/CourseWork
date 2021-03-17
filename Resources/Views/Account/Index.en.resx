@@ -117,58 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Account" xml:space="preserve">
-    <value>Аккаунт</value>
+  <data name="Admin" xml:space="preserve">
+    <value>Admin view</value>
   </data>
-  <data name="Children" xml:space="preserve">
-    <value>Детские</value>
+  <data name="Books" xml:space="preserve">
+    <value>Books</value>
   </data>
-  <data name="CourseWork" xml:space="preserve">
-    <value>Курсовой проект</value>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
   </data>
-  <data name="Dark" xml:space="preserve">
-    <value>Тёмная</value>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
   </data>
-  <data name="Fiction" xml:space="preserve">
-    <value>Фантастика</value>
+  <data name="EditChapt" xml:space="preserve">
+    <value>Edit chapter</value>
   </data>
-  <data name="Genres" xml:space="preserve">
-    <value>Жанр</value>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="History" xml:space="preserve">
-    <value>История</value>
+  <data name="Genre" xml:space="preserve">
+    <value>Genre</value>
   </data>
-  <data name="HomePage" xml:space="preserve">
-    <value>Домой</value>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
   </data>
-  <data name="Horror" xml:space="preserve">
-    <value>Хоррор</value>
+  <data name="New" xml:space="preserve">
+    <value>Add new</value>
   </data>
-  <data name="Light" xml:space="preserve">
-    <value>Светлая</value>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
   </data>
-  <data name="Privacy" xml:space="preserve">
-    <value>Конфиденциальность</value>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
   </data>
-  <data name="Romance" xml:space="preserve">
-    <value>Роман</value>
+  <data name="Update" xml:space="preserve">
+    <value>Update date</value>
   </data>
-  <data name="Search" xml:space="preserve">
-    <value>Поиск</value>
+  <data name="Upload" xml:space="preserve">
+    <value>Upload date</value>
   </data>
-  <data name="Theme" xml:space="preserve">
-    <value>Тема</value>
+  <data name="UserInfo" xml:space="preserve">
+    <value>User info</value>
   </data>
-  <data name="Thriller" xml:space="preserve">
-    <value>Триллер</value>
-  </data>
-  <data name="Title" xml:space="preserve">
-    <value>Фанфики</value>
-  </data>
-  <data name="Travel" xml:space="preserve">
-    <value>Путешествия</value>
-  </data>
-  <data name="Western" xml:space="preserve">
-    <value>Вестерн</value>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
   </data>
 </root>

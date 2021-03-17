@@ -27,33 +27,33 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Book.Id" class="form-control" value="@Model.Book.Id" />
                     <div class="form-group">
-                        <label asp-for="Book.Name" class="control-label"></label>
+                        <label class="control-label">@Localizer["Name"]</label>
                         <input asp-for="Book.Name" class="form-control" value="@Model.Book.Name" />
                         <span asp-validation-for="Book.Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Book.Description" class="control-label"></label>
+                        <label class="control-label">@Localizer["Description"]</label>
                         <textarea asp-for="Book.Description" class="form-control" value="@Model.Book.Description"></textarea>
                         <span asp-validation-for="Book.Description" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Book.Genre" class="control-label"></label>
+                        <label class="control-label">@Localizer["Genre"]</label>
                         <select asp-for="Book.Genre" asp-items="@ViewBag.Genres" class="form-control" value="@Model.Book.Genre"></select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Tags" class="control-label"></label>
+                        <label class="control-label">@Localizer["Tags"]</label>
                         <input asp-for="Tags" class="form-control tags" value="@String.Join(", ", Model.Book.Tags.Select(tag => tag.Value))" />
                         <span asp-validation-for="Tags" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Save" class="btn btn-primary" />
+                        <input type="submit" value="@Localizer["Save"]" class="btn btn-primary" />
                     </div>
                 </form>
             </div>
         </div>
 
         <div>
-            <a asp-action="Index" asp-route-userId="@ViewBag.UserId">Back to List</a>
+            <a asp-action="Index" asp-route-userId="@ViewBag.UserId">@Localizer["Back"]</a>
         </div>
 
     </body>

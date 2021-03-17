@@ -24,13 +24,13 @@
 
     <form asp-action="Index" class="form-inline">
         <p></p>
-        <input class="form-control tags" name="tags" type="text" placeholder="Search by tags">
-        <button class="btn btn-secondary" type="submit">Search</button>
+        <input class="form-control tags" name="tags" type="text" placeholder="@Localizer["TagSearch"]">
+        <button class="btn btn-secondary" type="submit">@Localizer["Search"]</button>
     </form>
 
     @if (ViewBag.ContainTags != null)
     {
-        <h3>Results of tags search:</h3>
+        <h3>@Localizer["Results"]:</h3>
 
         @foreach (var book in ViewBag.ContainTags)
         {
@@ -41,7 +41,7 @@
             <p></p>
         }
     }
-    <h3>Last updates:</h3>
+    <h3>@Localizer["LastUpdates"]:</h3>
 
     @foreach (var book in ViewBag.LastUpdateBooks)
     {
@@ -52,7 +52,7 @@
         <p></p>
     }
 
-    <h3>Best ratings:</h3>
+    <h3>@Localizer["BestRating"]:</h3>
     @foreach (var book in ViewBag.HighRatingBooks)
     {
         <div id="bloc">
@@ -62,15 +62,6 @@
         <p></p>
     }
 
-    <div class="text-center">
-        <h5>Welcome</h5>
-        <p>to FunFiction</p>
-    </div>
-
-    @if (Context.User.Identity.IsAuthenticated)
-    {
-
-    }
 </body>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/tagify.min.js"></script>

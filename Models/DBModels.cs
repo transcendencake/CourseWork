@@ -24,7 +24,6 @@ namespace CourseWork.Models
         Thriller,
         Romance,
         Western,
-        Contemporary,
         Travel,
         Children,
         History

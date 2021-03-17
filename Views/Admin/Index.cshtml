@@ -4,16 +4,16 @@
     ViewData["Title"] = "Admin'ochka";
 }
 
-<h1>User management</h1>
+<h1>@Localizer["UserManage"]</h1>
 
 <table class="table table-hover">
     <thead>
         <tr>
             <th scope="col">
-                @Html.DisplayNameFor(model => model.Email)
+                @Localizer["Email"]
             </th>
             <th scope="col">
-                Lockout
+                @Localizer["Lockout"]
             </th>
             <th></th>
         </tr>
@@ -28,15 +28,15 @@
                 @Html.DisplayFor(modelItem => item.LockoutEnd)
             </td>
             <td>
-                <a asp-area="" asp-controller="Admin" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-area="" asp-controller="Admin" asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                <a asp-area="" asp-controller="Admin" asp-action="Edit" asp-route-id="@item.Id">@Localizer["Edit"]</a> |
+                <a asp-area="" asp-controller="Admin" asp-action="Delete" asp-route-id="@item.Id">@Localizer["Delete"]</a> |
                 @if (item.LockoutEnd > DateTime.Now)
                 {
-                    <a asp-area="" asp-controller="Admin" asp-action="Unblock" asp-route-id="@item.Id">Unblock</a>
+                    <a asp-area="" asp-controller="Admin" asp-action="Unblock" asp-route-id="@item.Id">@Localizer["Unblock"]</a>
                 }
                 else
                 {
-                    <a asp-area="" asp-controller="Admin" asp-action="Block" asp-route-id="@item.Id">Block</a>
+                    <a asp-area="" asp-controller="Admin" asp-action="Block" asp-route-id="@item.Id">@Localizer["Block"]</a>
                 }
 
             </td>
