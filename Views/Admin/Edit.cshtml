@@ -4,7 +4,7 @@
     ViewData["Title"] = "Admin'ochka";
 }
 
-<h1>Manage @Model.Email roles</h1>
+<h1>@Localizer["Manage"] @Model.Email @Localizer["roles"]</h1>
 
 <form asp-action="Edit">
     <input type="hidden" name="id" value="@Model.Id" />
@@ -19,8 +19,8 @@
             {
                 <input type="checkbox" name="roles" value="@role.Name" />
             }
-            @role.Name <br />
+            @Localizer[role.Name] <br />
         }
-        <button type="submit" class="btn btn-danger">Save</button>
+        <button type="submit" class="btn btn-danger">@Localizer["Save"]</button>
     </div>
 </form>

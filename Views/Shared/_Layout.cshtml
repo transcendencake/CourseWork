@@ -30,8 +30,14 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["HomePage"]</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Genres"]</a>
+                            <div class="dropdown-menu">
+                                @foreach (var genre in Enum.GetNames(typeof(Genres)))
+                                {
+                                    <a asp-area="" asp-controller="Home" asp-action="SelectGenre" asp-route-genre="@genre" class="dropdown-item">@Localizer[genre]</a>
+                                }
+                            </div>
                         </li>
                         <partial name="_LoginPartial" />
                         <li class="nav-item dropdown">
@@ -50,8 +56,8 @@
                         </li>
                         <partial name="_SelectCulturePartial" />
                     </ul>
-                    <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="text" placeholder="@Localizer["Search"]">
+                    <form asp-area="" asp-controller="Home" asp-action="Search" class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" name="text" type="text" placeholder="@Localizer["Search"]">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">@Localizer["Search"]</button>
                     </form>
                     
@@ -65,11 +71,6 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2021 - @Localizer["CourseWork"] - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

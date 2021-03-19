@@ -1,23 +1,83 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<head>
+    <link rel="stylesheet" href="~/css/tagify.css">
+</head>
 
-<h3>Last updates:</h3>
+<body>
+    <style>
+        h3 {
+            color: grey;
+        }
 
-@foreach (var book in ViewBag.LastUpdateBooks)
-{
-    <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
-    <p>@book.Description</p>
-}
+        #bloc {
+            border: solid;
+            border-color: grey;
+        }
 
-<h3>Best ratings:</h3>
-@foreach (var book in ViewBag.HighRatingBooks)
-{
-    <h5><a asp-action="ReadBook" asp-route-bookId="@book.Id">@book.Name</a></h5>
-    <p>@book.Description</p>
-}
+        .tagify__dropdown__item {
+            color: black;
+        }
+    </style>
+    <input type="hidden" id="customInput" value="@ViewBag.tags" />
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <form asp-action="Index" class="form-inline">
+        <p></p>
+        <input class="form-control tags" name="tags" type="text" placeholder="@Localizer["TagSearch"]">
+        <button class="btn btn-secondary" type="submit">@Localizer["Search"]</button>
+    </form>
+
+    @if (ViewBag.ContainTags != null)
+    {
+        <h3>@Localizer["Results"]:</h3>
+
+        @foreach (var book in ViewBag.ContainTags)
+        {
+            <div id="bloc">
+                <h5><a asp-action="Contents" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+                <p>@book.Description</p>
+            </div>
+            <p></p>
+        }
+    }
+    <h3>@Localizer["LastUpdates"]:</h3>
+
+    @foreach (var book in ViewBag.LastUpdateBooks)
+    {
+        <div id="bloc">
+            <h5><a asp-action="Contents" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+            <p>@book.Description</p>
+        </div>
+        <p></p>
+    }
+
+    <h3>@Localizer["BestRating"]:</h3>
+    @foreach (var book in ViewBag.HighRatingBooks)
+    {
+        <div id="bloc">
+            <h5><a asp-action="Contents" asp-route-bookId="@book.Id">@book.Name | @book.AverageRating&#9957</a></h5>
+            <p>@book.Description</p>
+        </div>
+        <p></p>
+    }
+
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/tagify.min.js"></script>
+<script>
+        var tags = $("#customInput")[0].getAttribute("value");
+        console.log(tags);
+        var input = $(".tags")[0],
+            // init Tagify script on the above inputs
+            tagify = new Tagify(input, {
+                whitelist: tags.split(','), //
+                maxTags: 10,
+                dropdown: {
+                    maxItems: 20,           // <- mixumum allowed rendered suggestions
+                    classname: "add-tag-to-support-dark", // <- custom classname for this dropdown, so it could be targeted
+                    enabled: 0,             // <- show suggestions on focus
+                    closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+                }
+            })
+</script>

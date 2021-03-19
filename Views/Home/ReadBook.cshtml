@@ -1,0 +1,150 @@
+﻿@model CourseWork.Models.PageViewModel
+
+<head>
+    <title>@Model.Title</title>
+</head>
+<body>
+    <style>
+        h3 {
+            color: grey;
+        }
+    </style>
+    <p></p>
+    <h3>@Model.Title</h3>
+    @Html.Raw(Model.Text)
+    <input type="hidden" id="userRatingField" value="@ViewBag.UserRating">
+    <div class="form-inline">
+        @if (Model.HasPrevPage)
+        {
+            <a asp-action="ReadBook" asp-route-bookId="@ViewBag.BookId"
+               asp-route-chapterNum="@(Model.CurrentPage - 1)" class="btn btn-primary">@Localizer["Previous"]</a>
+        }
+        <form asp-action="ReadBook">
+            <input type="hidden" name="bookId" id="bookIdField" value="@ViewBag.BookId">
+            <div class="input-group">
+                <input type="text" name="chapterNum" id="chapterNumField" value="@Model.CurrentPage">
+                <div class="input-group-append">
+                    <span class="input-group-text">/@Model.TotalPages</span>
+                </div>
+            </div>
+        </form>
+        @if (Model.HasNextPage)
+        {
+            <a asp-action="ReadBook" asp-route-bookId="@ViewBag.BookId"
+               asp-route-chapterNum="@(Model.CurrentPage + 1)" class="btn btn-primary">@Localizer["Next"]</a>
+        }
+    </div>
+    @if (Context.User.Identity.IsAuthenticated)
+    {
+        <p></p>
+        <input type="hidden" id="userNameField" value="@Context.User.Identity.Name">
+        <label class="btn btn-info">
+            <input type="checkbox" id="like" checked="@Model.Liked" autocomplete="off"> @Localizer["Like"]
+        </label>
+        <h1><div class="rating"></div></h1>
+        <h3>@Localizer["Reviews"]:</h3>
+        <div id="comments"></div>
+        <input type="text" id="commentText" />
+        <input type="button" class="btn btn-primary" id="sendComment" value="@Localizer["Send"] " />
+    }
+    <div>
+        <a asp-action="Index">@Localizer["Back"]</a>
+    </div>
+
+</body>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/rater.min.js"></script>
+<script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
+<script>
+
+    const connection = new signalR.HubConnectionBuilder().withUrl("/comments").build();
+
+    connection.on('ReceiveComment', function (bookId, userName, text) {
+        if (bookId == $('#bookIdField').val()) {
+            AppendComment(userName, text);
+        }
+    });    
+    connection.on('ReceiveAllComments', function (comments) {
+        if (comments.length > 2) {
+            let commentsArr = comments.split(";");
+            for (comment of commentsArr) {
+                comment = comment.split("|");
+                AppendComment(comment[0], comment[1]);
+            }
+        }        
+    });
+
+    function AppendComment(userName, text) {
+        let userInfoElem = document.createElement("b");
+        userInfoElem.appendChild(document.createTextNode(userName + ': '));
+
+        let commentElem = document.createElement("p");
+        commentElem.appendChild(userInfoElem);
+        commentElem.appendChild(document.createTextNode(text));
+
+        $('#comments').append(commentElem);
+    }
+
+    $('#sendComment').on("click", function (e) {
+        let text = $('#commentText').val();
+        let bookId = $('#bookIdField').val();
+        let userName = $('#userNameField').val();
+        connection.invoke("NewComment", text, Number(bookId), userName);
+        $('#commentText').val("");
+    });
+
+    connection.start().then(() => {
+        let bookId = $('#bookIdField').val();
+        connection.invoke("GetAllComments", Number(bookId));
+    });    
+
+    //rating
+    var init_rate, disable;
+    var user_value = $('#userRatingField').val();
+    if (user_value != "") {
+        init_rate = user_value;
+        disable = true;
+    }
+    else {
+        init_rate = 0;
+        disable = false;
+    }
+    console.log(disable);
+    console.log(user_value);
+    var options = {
+        max_value: 5,
+        step_size: 1,
+        initial_value: init_rate,
+        symbols: {
+            utf8_star: {
+                base: '\u2606',
+                hover: '\u2605',
+                selected: '\u2605',
+            },
+        },
+        selected_symbol_type: 'utf8_star', // Must be a key from symbols
+        cursor: 'default',
+        readonly: disable,
+        change_once: true, // Determines if the rating can only be set once
+        ajax_method: 'POST',
+        url: '@Url.Action("RatingClick", "Home")',
+        additional_data: { bookId: $('#bookIdField').val() }, // Additional data to send to the server
+    };
+
+    $(".rating").rate(options);
+    //like
+    $('#like').change(function () {
+        var data = { bookId: $('#bookIdField').val(), chapterNum: $('#chapterNumField').val() };
+        $.ajax({
+        type: "POST",
+        url: '@Url.Action("LikeClick", "Home")',
+        contentType: 'application/x-www-form-urlencoded',
+        data: data,
+        success: function (result) {
+            console.log(result);
+        }
+        })
+    })
+
+</script>

@@ -1,0 +1,78 @@
+﻿@model CourseWork.Models.BookAddViewModel
+
+    <head>
+        <link rel="stylesheet" href="~/css/tagify.css">
+    </head>
+    <style>
+        h3 {
+            color: grey;
+        }
+
+        #bloc {
+            border: solid;
+            border-color: grey;
+        }
+
+        .tagify__dropdown__item {
+            color: black;
+        }
+    </style>
+
+
+    <body>
+        <div class="row">
+            <div class="col-md-4">
+                <input type="hidden" id="customInput" value="@ViewBag.tags" />
+                <form asp-action="EditTitle">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Book.Id" class="form-control" value="@Model.Book.Id" />
+                    <div class="form-group">
+                        <label class="control-label">@Localizer["Name"]</label>
+                        <input asp-for="Book.Name" class="form-control" value="@Model.Book.Name" />
+                        <span asp-validation-for="Book.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@Localizer["Description"]</label>
+                        <textarea asp-for="Book.Description" class="form-control" value="@Model.Book.Description"></textarea>
+                        <span asp-validation-for="Book.Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@Localizer["Genre"]</label>
+                        <select asp-for="Book.Genre" asp-items="@ViewBag.Genres" class="form-control" value="@Model.Book.Genre"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@Localizer["Tags"]</label>
+                        <input asp-for="Tags" class="form-control tags" value="@String.Join(", ", Model.Book.Tags.Select(tag => tag.Value))" />
+                        <span asp-validation-for="Tags" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="@Localizer["Save"]" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <a asp-action="Index" asp-route-userId="@ViewBag.UserId">@Localizer["Back"]</a>
+        </div>
+
+    </body>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/tagify.min.js"></script>
+    <script>
+        var tags = $("#customInput")[0].getAttribute("value");
+        console.log(tags);
+        var input = $(".tags")[0],
+            // init Tagify script on the above inputs
+            tagify = new Tagify(input, {
+                whitelist: tags.split(','), //
+                maxTags: 10,
+                dropdown: {
+                    maxItems: 20,           // <- mixumum allowed rendered suggestions
+                    classname: "add-tag-to-support-dark", // <- custom classname for this dropdown, so it could be targeted
+                    enabled: 0,             // <- show suggestions on focus
+                    closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+                }
+            })
+    </script>
+
