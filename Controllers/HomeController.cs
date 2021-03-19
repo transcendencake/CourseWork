@@ -54,8 +54,7 @@ namespace CourseWork.Controllers
                 TotalPages = dbContext.Chapters.Where(c => c.BookId == bookId).Count(),
                 Liked = CheckUserLiked(user, chapter.Id),
                 Title = chapter.Title,
-                Text = MarkdownUtils.MarkdownParser(chapter.Text),
-                Picture = StorageUtils.GetPictureUri(chapter.PicturePath)
+                Text = GetHtmlFromChapter(chapter)
             });
         }
         [HttpPost]
@@ -181,6 +180,14 @@ namespace CourseWork.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        private string GetHtmlFromChapter(Chapter chapter)
+        {
+            string result = "";
+            if (chapter.PicturePath != null)
+                result += $"<img src=\"{StorageUtils.GetPictureUri(chapter.PicturePath)}\" alt=\"...\" style=\"max-height: 250px\">";
+            result += MarkdownUtils.MarkdownParser(chapter.Text);
+            return result;
         }
     }
 }

@@ -58,21 +58,20 @@ namespace CourseWork
             services.AddAuthentication()
                 .AddGoogle(googleOptions =>
                  {
-                     googleOptions.ClientId = "1023560741731-s9ms2kbbnk79amoaqgcsbmdfr12s01f4.apps.googleusercontent.com";
-                     googleOptions.ClientSecret = "I7Kgc7JWqy4D6Q5pA62_lprY";
+                     googleOptions.ClientId = Configuration["Oauth:googleId"];
+                     googleOptions.ClientSecret = Configuration["Oauth:googleSecret"];
                      googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
                  })
                 .AddFacebook(facebookOptions =>
                 {
-                    facebookOptions.AppId = "489707118856311";
-                    facebookOptions.AppSecret = "5dd148fbd171a1928e67a3af961386f0";
+                    facebookOptions.AppId = Configuration["Oauth:facebookId"];
+                    facebookOptions.AppSecret = Configuration["Oauth:facebookSecret"];
                     facebookOptions.SignInScheme = IdentityConstants.ExternalScheme;
                 })
                 .AddMicrosoftAccount(microsoftOptions =>
                 {
-                    microsoftOptions.ClientId = "fbe42ccb-baf9-4a70-a7ab-a806409878b0";
-                    //microsoftOptions.ClientId = "3cfb0cc2-d7e5-42a7-82f1-5fe4c1969075";
-                    microsoftOptions.ClientSecret = "U.~D7ep-Y9G.CXlIa-SIqQAx3gNump013P";
+                    microsoftOptions.ClientId = Configuration["Oauth:microsoftId"];
+                    microsoftOptions.ClientSecret = Configuration["Oauth:microsoftSecret"]; ;
                     microsoftOptions.SignInScheme = IdentityConstants.ExternalScheme;
                 });
                  
