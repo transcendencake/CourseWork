@@ -9,7 +9,7 @@
         .Select(item => new SelectListItem { Value = item.Name, Text = item.NativeName }).ToList();
 }
 <li class="nav-item">
-    <form asp-controller="Cookies" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path"
+    <form asp-controller="Cookies" asp-action="SetLanguage" asp-route-returnUrl="@string.Format("{0}://{1}{2}{3}", Context.Request.Scheme, Context.Request.Host, Context.Request.Path, Context.Request.QueryString)"
           method="post" class="form-inline nav-item">
         Language:  <select class="custom-select" name="language" onchange="this.form.submit();"
                           asp-for="@requestCulture.RequestCulture.UICulture.Name"
