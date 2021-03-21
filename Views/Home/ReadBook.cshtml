@@ -10,7 +10,6 @@
         }
     </style>
     <p></p>
-    <h3>@Model.Title</h3>
     @Html.Raw(Model.Text)
     <input type="hidden" id="userRatingField" value="@ViewBag.UserRating">
     <div class="form-inline">
@@ -36,6 +35,9 @@
     </div>
     @if (Context.User.Identity.IsAuthenticated)
     {
+        <p></p>
+        <a asp-action="GetPdf" asp-route-bookId="@ViewBag.BookId">@Localizer["Pdf"] |</a>
+        <a asp-action="Subscribe" asp-route-bookId="@ViewBag.BookId">@Localizer["Subscribe"]</a>
         <p></p>
         <input type="hidden" id="userNameField" value="@Context.User.Identity.Name">
         <label class="btn btn-info">

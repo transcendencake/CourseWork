@@ -1,5 +1,6 @@
 ﻿using CourseWork.Data;
 using CourseWork.Models;
+using CourseWork.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -110,7 +111,26 @@ namespace CourseWork.Controllers
             ViewBag.FoundBooks = foundBooks;
             return View();
         }
-        
+        [HttpGet]
+        public IActionResult Subscribe(int bookId)
+        {
+            ViewBag.BookId = bookId;
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Subscribe(SubscribeViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                Subscribe newSubscribe = new Subscribe { BookId = model.BookId, Email = model.Email };
+                if (dbContext.Subscribes.Where(s => s.Email == newSubscribe.Email).Count() == 0)
+                {
+                    dbContext.Subscribes.Add(newSubscribe);
+                    dbContext.SaveChanges();
+                }            
+            }
+            return RedirectToAction("Index");
+        }
         private int? CheckUserRating(ApplicationUser user, int bookId)
         {
             if (user == null) return null;
@@ -171,11 +191,6 @@ namespace CourseWork.Controllers
             return totalRating;
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -183,11 +198,32 @@ namespace CourseWork.Controllers
         }
         private string GetHtmlFromChapter(Chapter chapter)
         {
-            string result = "";
+            string result = $"<h3>{chapter.Title}</h3>";
             if (chapter.PicturePath != null)
                 result += $"<img src=\"{StorageUtils.GetPictureUri(chapter.PicturePath)}\" alt=\"...\" style=\"max-height: 250px\">";
             result += MarkdownUtils.MarkdownParser(chapter.Text);
             return result;
+        }
+        private string GetBookAsAString(int bookId)
+        {
+            var book = dbContext.Books.FirstOrDefault(b => b.Id == bookId);
+            if(book != null)
+            {
+                var chapters = dbContext.Chapters.Where(c => c.BookId == bookId);
+                string res = $"<h1>{book.Name}</h1>";
+                foreach (var chapter in chapters)
+                {
+                    res += GetHtmlFromChapter(chapter);
+                }
+                return res;
+            }
+            return null;
+        }
+        public IActionResult GetPdf(int bookId)
+        {
+            var renderer = new IronPdf.HtmlToPdf();
+            var pdf = renderer.RenderHtmlAsPdf(GetBookAsAString(bookId)).BinaryData;
+            return File(pdf, "application/pdf");
         }
     }
 }

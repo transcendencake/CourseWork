@@ -4,14 +4,16 @@ using CourseWork.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CourseWork.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210319154219_Add_subscribes")]
+    partial class Add_subscribes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,7 +219,7 @@ namespace CourseWork.Migrations
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("CourseWork.Models.Subscribe", b =>
+            modelBuilder.Entity("CourseWork.Models.Subcribe", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -237,7 +239,7 @@ namespace CourseWork.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.ToTable("Subscribes");
+                    b.ToTable("Subcribe");
                 });
 
             modelBuilder.Entity("CourseWork.Models.Tag", b =>
@@ -442,7 +444,7 @@ namespace CourseWork.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("CourseWork.Models.Subscribe", b =>
+            modelBuilder.Entity("CourseWork.Models.Subcribe", b =>
                 {
                     b.HasOne("CourseWork.Models.Book", "Book")
                         .WithMany("Subcribes")

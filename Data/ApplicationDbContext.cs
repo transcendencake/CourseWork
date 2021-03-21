@@ -15,6 +15,7 @@ namespace CourseWork.Data
         public DbSet<Like> Likes { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Subscribe> Subscribes { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -35,10 +36,6 @@ namespace CourseWork.Data
                 .HasKey(c => new { c.Id });
             builder.Entity<Like>()
                 .HasKey(c => new { c.ChapterId, c.UserId });
-            builder.Entity<ApplicationUser>()
-                .HasMany(u => u.Books)
-                .WithOne(b => b.User)
-                .OnDelete(DeleteBehavior.Cascade);
        }
     }
 }

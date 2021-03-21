@@ -6,7 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="htmlpage.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
+    <PackageReference Include="IronPdf" Version="2021.3.1" />
+    <PackageReference Include="MailKit" Version="2.11.1" />
     <PackageReference Include="Markdown" Version="2.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Core" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="5.0.3" />
