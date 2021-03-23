@@ -32,7 +32,6 @@ namespace CourseWork.Models
     public class Book
     {
         public string ApplicationUserId { get; set; }
-        public ApplicationUser User { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -43,6 +42,7 @@ namespace CourseWork.Models
         public DateTime UpdateDate { get; set; }
         public List<Chapter> Chapters { get; set; }
         public List<Comment> Comments { get; set; }
+        public List<Subscribe> Subcribes { get; set; }
         [NotMapped]
         public float? AverageRating { get; set; }
     }
@@ -73,5 +73,13 @@ namespace CourseWork.Models
         public string Author { get; set; }
         public string Text { get; set; }
         public DateTime DateTime { get; set; }
+    }
+    public class Subscribe
+    {
+        public int Id { get; set; }
+        public int BookId { get; set; }
+        public Book Book { get; set; }
+        public string Email { get; set; }
+        public DateTime MessageSent { get; set; }
     }
 }

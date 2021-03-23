@@ -13,17 +13,25 @@ using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using CourseWork.Utils;
+using Microsoft.Extensions.Configuration;
 
 namespace CourseWork.Controllers
 {
     public class AccountController : Controller
     {
+        private delegate void UpdateHandler(int bookId);
+        private event UpdateHandler bookUdpate;
         private ApplicationDbContext dbContext;
+        private IConfiguration configuration;
         private UserManager<ApplicationUser> userManager;
-        public AccountController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
+        public AccountController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             dbContext = applicationDbContext;
             this.userManager = userManager;
+            this.configuration = configuration;
+            bookUdpate += ChangeUpdateDate;
+            bookUdpate += NotifyUsers;
         }
         [HttpGet]
         public async Task<IActionResult> Index(string userId = null)
@@ -85,12 +93,9 @@ namespace CourseWork.Controllers
         {
             model.Book.UpdateDate = DateTime.Now;
             model.Book.UploadDate = DateTime.Now;
-
-            dbContext.Books.Add(model.Book);
-
-            Logger.DebugLogger.LogDebug(model.Tags);
-
             model.Book.Tags.AddRange(GetTagsToAdd(model.Tags));
+
+            dbContext.Books.Add(model.Book);           
 
             AddChapter(model.Book, 1, null);
 
@@ -118,8 +123,6 @@ namespace CourseWork.Controllers
             var book = dbContext.Books.Find(bookId);            
             if (await CheckBookAuthority(book.ApplicationUserId))
             {
-                book.UpdateDate = DateTime.Now;
-                dbContext.SaveChanges();
                 ViewBag.BookId = bookId;
                 ViewBag.Chapters = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count();
                 Chapter chapter = null;
@@ -140,7 +143,7 @@ namespace CourseWork.Controllers
         {
             Chapter chapter = dbContext.Chapters.Find(model.Chapter.Id);
             if (chapter != null)
-            {
+            {                
                 chapter.Text = model.Chapter.Text;
                 chapter.Title = model.Chapter.Title;
                 if (model.Picture != null)
@@ -150,6 +153,7 @@ namespace CourseWork.Controllers
                         chapter.PicturePath = chapter.Id.ToString();
                     }
                 }
+                bookUdpate.Invoke(chapter.BookId);
                 dbContext.SaveChanges();
                 return RedirectToAction("EditBook", new { bookId = chapter.BookId });
             }
@@ -163,7 +167,7 @@ namespace CourseWork.Controllers
             {
                 var newChapterNum = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count() + 1;
                 AddChapter(book, newChapterNum, null);
-
+                bookUdpate.Invoke(bookId);
                 return RedirectToAction("EditBook", new { bookId = bookId, chapterNum = newChapterNum});
             }
             else
@@ -178,7 +182,7 @@ namespace CourseWork.Controllers
             if (await CheckBookAuthority(book.ApplicationUserId))
             {
                 DeleteAndReorder(bookId, chapterId);
-
+                bookUdpate.Invoke(bookId);
                 return RedirectToAction("EditBook", new { bookId = bookId});
             }
             else
@@ -214,6 +218,7 @@ namespace CourseWork.Controllers
                 }
                 chapters[was].ChapterNum = become + 1;
                 dbContext.SaveChanges();
+                bookUdpate.Invoke(bookId);
             }            
             return Json(result);
         }
@@ -237,14 +242,13 @@ namespace CourseWork.Controllers
         {            
             var book = dbContext.Books.Include(book => book.Tags).FirstOrDefault(book => book.Id == model.Book.Id);
             book.Name = model.Book.Name;
-            book.UpdateDate = DateTime.Now;
             book.Genre = model.Book.Genre;
             book.Description = model.Book.Description;
 
             EditBookTags(book, book.Tags, model.Tags);
-
+            
             dbContext.SaveChanges();
-
+            bookUdpate.Invoke(model.Book.Id);
             return RedirectToAction("Index", new { userId = model.Book.ApplicationUserId });
         }
         private void DeleteAndReorder(int bookId, int chapterId)
@@ -318,7 +322,44 @@ namespace CourseWork.Controllers
         }
         private void ChangeCommentsUsername(string was, string become)
         {
+            if (was != become)
+            {
+                var comments = dbContext.Comments.Where(c => c.Author == was);
+                foreach (var item in comments)
+                {
+                    item.Author = become; 
+                }
+                dbContext.SaveChanges();
+            }
+        }
+        private void ChangeUpdateDate(int bookId)
+        {
+            var book = dbContext.Books.Find(bookId);
+            if (book != null)
+            {
+                book.UpdateDate = DateTime.Now;
+                dbContext.SaveChanges();
+            }
+        }
+        private async void NotifyUsers(int bookId)
+        {
+            var emailService = new EmailService(configuration);
+            var users = dbContext.Subscribes.Where(s => s.BookId == bookId && s.MessageSent.Date != DateTime.Now.Date);
+            if (users.Count() == 0) return;
 
+            var userEmails = users.Select(u => u.Email);          
+            string message = "The book you subscribed on has been updated. Read book: " + string.Format("{0}://{1}{2}", Request.Scheme,
+            Request.Host, this.Url.Action("Contents", "Home", new { BookId = bookId }));
+            try
+            {
+                await emailService.SendEmailsAsync(userEmails, message);
+                foreach (var user in users)
+                    user.MessageSent = DateTime.Now;
+            }
+            catch (Exception e)
+            {
+                Logger.DebugLogger.LogError(e.Message);
+            }            
         }
     }
 }

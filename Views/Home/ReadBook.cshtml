@@ -10,7 +10,6 @@
         }
     </style>
     <p></p>
-    <h3>@Model.Title</h3>
     @Html.Raw(Model.Text)
     <input type="hidden" id="userRatingField" value="@ViewBag.UserRating">
     <div class="form-inline">
@@ -36,6 +35,9 @@
     </div>
     @if (Context.User.Identity.IsAuthenticated)
     {
+        <p></p>
+        <a asp-action="GetPdf" asp-route-bookId="@ViewBag.BookId">@Localizer["Pdf"] |</a>
+        <a asp-action="Subscribe" asp-route-bookId="@ViewBag.BookId">@Localizer["Subscribe"]</a>
         <p></p>
         <input type="hidden" id="userNameField" value="@Context.User.Identity.Name">
         <label class="btn btn-info">
@@ -123,13 +125,13 @@
                 selected: '\u2605',
             },
         },
-        selected_symbol_type: 'utf8_star', // Must be a key from symbols
+        selected_symbol_type: 'utf8_star',
         cursor: 'default',
         readonly: disable,
-        change_once: true, // Determines if the rating can only be set once
+        change_once: true,
         ajax_method: 'POST',
         url: '@Url.Action("RatingClick", "Home")',
-        additional_data: { bookId: $('#bookIdField').val() }, // Additional data to send to the server
+        additional_data: { bookId: $('#bookIdField').val() },
     };
 
     $(".rating").rate(options);
