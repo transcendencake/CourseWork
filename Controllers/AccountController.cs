@@ -93,12 +93,9 @@ namespace CourseWork.Controllers
         {
             model.Book.UpdateDate = DateTime.Now;
             model.Book.UploadDate = DateTime.Now;
-
-            dbContext.Books.Add(model.Book);
-
-            Logger.DebugLogger.LogDebug(model.Tags);
-
             model.Book.Tags.AddRange(GetTagsToAdd(model.Tags));
+
+            dbContext.Books.Add(model.Book);           
 
             AddChapter(model.Book, 1, null);
 
@@ -126,7 +123,6 @@ namespace CourseWork.Controllers
             var book = dbContext.Books.Find(bookId);            
             if (await CheckBookAuthority(book.ApplicationUserId))
             {
-                dbContext.SaveChanges();
                 ViewBag.BookId = bookId;
                 ViewBag.Chapters = dbContext.Chapters.Where(chapter => chapter.BookId == book.Id).Count();
                 Chapter chapter = null;
@@ -147,8 +143,7 @@ namespace CourseWork.Controllers
         {
             Chapter chapter = dbContext.Chapters.Find(model.Chapter.Id);
             if (chapter != null)
-            {
-                bookUdpate.Invoke(chapter.BookId);
+            {                
                 chapter.Text = model.Chapter.Text;
                 chapter.Title = model.Chapter.Title;
                 if (model.Picture != null)
@@ -158,6 +153,7 @@ namespace CourseWork.Controllers
                         chapter.PicturePath = chapter.Id.ToString();
                     }
                 }
+                bookUdpate.Invoke(chapter.BookId);
                 dbContext.SaveChanges();
                 return RedirectToAction("EditBook", new { bookId = chapter.BookId });
             }

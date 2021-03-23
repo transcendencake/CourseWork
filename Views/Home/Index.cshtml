@@ -69,15 +69,14 @@
         var tags = $("#customInput")[0].getAttribute("value");
         console.log(tags);
         var input = $(".tags")[0],
-            // init Tagify script on the above inputs
             tagify = new Tagify(input, {
-                whitelist: tags.split(','), //
+                whitelist: tags.split(','),
                 maxTags: 10,
                 dropdown: {
-                    maxItems: 20,           // <- mixumum allowed rendered suggestions
-                    classname: "add-tag-to-support-dark", // <- custom classname for this dropdown, so it could be targeted
-                    enabled: 0,             // <- show suggestions on focus
-                    closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+                    maxItems: 20,
+                    classname: "add-tag-to-support-dark", 
+                    enabled: 0, 
+                    closeOnSelect: false
                 }
             })
 </script>

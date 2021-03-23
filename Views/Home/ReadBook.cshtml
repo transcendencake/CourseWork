@@ -125,13 +125,13 @@
                 selected: '\u2605',
             },
         },
-        selected_symbol_type: 'utf8_star', // Must be a key from symbols
+        selected_symbol_type: 'utf8_star',
         cursor: 'default',
         readonly: disable,
-        change_once: true, // Determines if the rating can only be set once
+        change_once: true,
         ajax_method: 'POST',
         url: '@Url.Action("RatingClick", "Home")',
-        additional_data: { bookId: $('#bookIdField').val() }, // Additional data to send to the server
+        additional_data: { bookId: $('#bookIdField').val() },
     };
 
     $(".rating").rate(options);

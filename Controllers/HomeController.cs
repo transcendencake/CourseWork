@@ -49,6 +49,7 @@ namespace CourseWork.Controllers
 
             ViewBag.UserRating = userRating ?? CheckUserRating(user, bookId);
             ViewBag.BookId = bookId;
+
             return View(new PageViewModel
             {
                 CurrentPage = chapterNum.GetValueOrDefault(),
