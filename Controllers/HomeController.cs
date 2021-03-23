@@ -102,13 +102,16 @@ namespace CourseWork.Controllers
         [HttpPost]
         public IActionResult Search(string text)
         {
-
-            var foundBookIds = dbContext.Chapters.Where(c => EF.Functions.FreeText(c.Text, text) || c.Title == text).Select(c => c.BookId)
+            if (text != null)
+            {
+                var foundBookIds = dbContext.Chapters.Where(c => EF.Functions.FreeText(c.Text, text) || c.Title == text).Select(c => c.BookId)
                 .Union(dbContext.Comments.Where(c => EF.Functions.FreeText(c.Text, text)).Select(c => c.BookId))
                 .Union(dbContext.Books.Where(c => c.Name == text).Select(c => c.Id)).Distinct();
-            var foundBooks = dbContext.Books.Include(book => book.Ratings).Where(c => foundBookIds.Contains(c.Id));
-            foreach (var book in foundBooks) GetAverageRating(book.Ratings, book);
-            ViewBag.FoundBooks = foundBooks;
+                var foundBooks = dbContext.Books.Include(book => book.Ratings).Where(c => foundBookIds.Contains(c.Id));
+                foreach (var book in foundBooks) GetAverageRating(book.Ratings, book);
+                ViewBag.FoundBooks = foundBooks;
+            }
+            else ViewBag.FoundBooks = null;
             return View();
         }
         [HttpGet]
